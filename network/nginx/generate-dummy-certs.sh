@@ -8,8 +8,6 @@ set -euo pipefail
 
 DOMAINS=(
     "dummy"
-    "backrest.mc.localhost"
-    "gitlab.mc.localhost"
 )
 
 CERT_BASE="./network/nginx/letsencrypt/live"

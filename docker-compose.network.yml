@@ -3,7 +3,6 @@ services:
     image: nginx:mainline-alpine-perl
     container_name: mastercompose-nginx-proxy
     restart: unless-stopped
-    network_mode: "host"
     env_file:
       - .env
     environment:
@@ -12,7 +11,13 @@ services:
       - ${NGINX_DATA}:/data
       - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
       - ${NGINX_CUSTOM}:/etc/nginx/templates
-
+    networks:
+      - internal
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - zerotier
 
   zerotier:
     image: zerotier/zerotier:1.14.2
@@ -28,3 +33,11 @@ services:
       - "${ZT_PORT}:9993"
     volumes:
       - ${ZEROTIER_DATA}:/var/lib/zerotier-one
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: mastercompose_internal
+    # driver: bridge
+    external: true

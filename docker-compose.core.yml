@@ -1,12 +1,19 @@
 services:
   gitlab:
     image: gitlab/gitlab-ce:18.4.3-ce.0
+    container_name: mastercompose-gitlab
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.mc.localhost'
-        nginx['listen_port'] = 80
-        nginx['listen_https'] = false  # Nginx reverse proxy handles HTTPS
+        external_url 'http://${GITLAB_HOST}:${GITLAB_PORT}'
+        nginx['listen_port'] = ${GITLAB_PORT}
+        nginx['listen_https'] = false
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        gitlab_rails['time_zone'] = 'UTC'
+    ports:
+      - "8022:22"  # optional SSH access if needed
     volumes:
       - ./core/gitlab/config:/etc/gitlab
       - ./core/gitlab/logs:/var/log/gitlab
@@ -14,16 +21,21 @@ services:
     networks:
       - internal
 
-  # backrest:
-  #   image: garethgeorge/backrest:v1.10.1-scratch
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./core/backups:/backups
-  #     - ./core/gitlab/data:/source/gitlab:ro
-  #   networks:
-  #     - internal
+  # Optional backup service
+  backrest:
+    image: garethgeorge/backrest:v1.10.1-scratch
+    container_name: mastercompose-backrest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./core/backups:/backups
+      - ./core/gitlab/data:/source/gitlab:ro
+    networks:
+      - internal
 
 networks:
   internal:
     name: mastercompose_internal
-    external: true
+    driver: bridge
+    # external: true
