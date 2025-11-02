@@ -20,6 +20,10 @@ GitLab  Portus  Backrest  ...
 
 ## generate cert
 
+```shell
+sudo chmod +x ./network/nginx/*.sh
+```
+
 ### for ssl
 
 ```shell

@@ -5,13 +5,15 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'https://gitlab.com'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false  # Nginx reverse proxy handles HTTPS
     volumes:
-      - ./gitlab/config:/etc/gitlab
-      - ./gitlab/logs:/var/log/gitlab
-      - ./gitlab/data:/var/opt/gitlab
+      - ./core/gitlab/config:/etc/gitlab
+      - ./core/gitlab/logs:/var/log/gitlab
+      - ./core/gitlab/data:/var/opt/gitlab
     networks:
       - internal
-    # No ports exposed!
+
 
   # portus:
   #   image: opensuse/portus:head
