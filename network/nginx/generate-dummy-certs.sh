@@ -5,9 +5,8 @@
 # ======================================================
 
 DOMAINS=(
-    "backrest.com"
-    "gitlab.com"
-    "portus.com"
+    "backrest.mc.localhost"
+    "gitlab.mc.localhost"
 )
 
 CERT_BASE="./network/nginx/letsencrypt/live"

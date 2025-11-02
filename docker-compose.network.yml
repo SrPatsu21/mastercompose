@@ -1,7 +1,7 @@
 services:
   nginx-proxy:
     image: nginx:mainline-alpine-perl
-    container_name: mc-nginx-proxy
+    container_name: mastercompose-nginx-proxy
     restart: unless-stopped
     ports:
       # Only accessible to ZeroTier clients
@@ -26,7 +26,7 @@ services:
 
   zerotier:
     image: zerotier/zerotier:1.14.2
-    container_name: mc-zerotier
+    container_name: mastercompose-zerotier
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -47,6 +47,8 @@ services:
 
 networks:
   internal:
+    name: mastercompose_internal
     driver: bridge   # Local-only network
   zerotier:
+    name: mastercompose_zerotiernet
     driver: bridge

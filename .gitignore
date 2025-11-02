@@ -7,6 +7,9 @@
 /network/zerotier/identity.secret
 /network/zerotier/metricstoken.secret
 
+# GitLab
+core/gitlab/*
+
 # Runtime files (not needed in git)
 /network/zerotier/zerotier-one.pid
 /network/zerotier/zerotier-one.port

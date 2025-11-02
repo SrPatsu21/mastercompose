@@ -1,10 +1,10 @@
 services:
   gitlab:
-    image: gitlab/gitlab-ce:latest
+    image: gitlab/gitlab-ce:18.4.3-ce.0
     restart: unless-stopped
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.com'
+        external_url 'https://gitlab.mc.localhost'
         nginx['listen_port'] = 80
         nginx['listen_https'] = false  # Nginx reverse proxy handles HTTPS
     volumes:
@@ -14,19 +14,8 @@ services:
     networks:
       - internal
 
-
-  # portus:
-  #   image: opensuse/portus:head
-  #   restart: unless-stopped
-  #   environment:
-  #     PORTUS_MACHINE_FQDN_VALUE: portus.local
-  #   volumes:
-  #     - ./portus:/data
-  #   networks:
-  #     - internal
-
   # backrest:
-  #   image: ghcr.io/pgbackrest/backrest:latest
+  #   image: garethgeorge/backrest:v1.10.1-scratch
   #   restart: unless-stopped
   #   volumes:
   #     - ./backups:/backups
@@ -37,4 +26,5 @@ services:
 
 networks:
   internal:
+    name: mastercompose_internal
     external: true

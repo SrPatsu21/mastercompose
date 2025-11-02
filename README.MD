@@ -5,7 +5,6 @@ Set up almost everything to devops
 | Component     | Purpose                                                    | Notes                                                                                                                         |
 | ------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **GitLab‑CE** | DevOps platform (repositories, CI/CD, user management, UI) | Self‑hosted; runs in Docker; can be accessed via your VPN (ZeroTier) for remote collaborators.                                |
-| **Portus**    | Container image registry (private Docker registry with UI) | Stores your Docker images locally; can integrate with GitLab CI/CD for builds.                                                |
 | **ZeroTier**  | VPN / overlay network                                      | Handles NAT/firewall issues, allows collaborators to access GitLab & Portus without opening ports to the public Internet.     |
 | **Backrest**  | Backup solution with UI                                    | Automates backups of GitLab volumes, Portus volumes, and optionally other data; supports rotation policies (local and cloud). |
 | **nginx**     | Reverse Proxy                                              | Open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols.                                             |
@@ -34,4 +33,11 @@ sudo chmod +x ./network/nginx/*.sh
 
 ```shell
 ./network/nginx/generate-dummy-certs.sh
+```
+
+## Zerotier fix files
+
+```shell
+sudo chmod -R a+r ./network/zerotier
+sudo find ./network/zerotier -type d -exec chmod a+rx {} \;
 ```
