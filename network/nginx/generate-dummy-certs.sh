@@ -4,7 +4,10 @@
 # for all domains used by nginx-proxy before Let's Encrypt is ready
 # ======================================================
 
+set -euo pipefail
+
 DOMAINS=(
+    "dummy"
     "backrest.mc.localhost"
     "gitlab.mc.localhost"
 )
@@ -13,13 +16,12 @@ CERT_BASE="./network/nginx/letsencrypt/live"
 DAYS_VALID=365
 SSL_SIZE=2048
 
-echo "🔧 Generating dummy certificates if missing..."
+echo "🔧 Checking and generating dummy certificates if missing..."
 for domain in "${DOMAINS[@]}"; do
     DOMAIN_PATH="${CERT_BASE}/${domain}"
     CERT_FILE="${DOMAIN_PATH}/fullchain.pem"
     KEY_FILE="${DOMAIN_PATH}/privkey.pem"
 
-    # skip if already exists
     if [[ -f "$CERT_FILE" && -f "$KEY_FILE" ]]; then
         echo "✅ Certificate already exists for ${domain}"
         continue
@@ -32,12 +34,14 @@ for domain in "${DOMAINS[@]}"; do
         -days ${DAYS_VALID} \
         -keyout "${KEY_FILE}" \
         -out "${CERT_FILE}" \
-        -subj "/CN=${domain}" >/dev/null 2>&1
+        -subj "/CN=${domain}" \
+        -addext "subjectAltName=DNS:${domain}" >/dev/null 2>&1
 
-    # optional chain copy
-    cp "${CERT_FILE}" "${DOMAIN_PATH}/cert.pem" >/dev/null 2>&1 || true
+    cp -f "${CERT_FILE}" "${DOMAIN_PATH}/cert.pem" >/dev/null 2>&1 || true
+    chmod 644 "${CERT_FILE}" "${DOMAIN_PATH}/cert.pem" || true
+    chmod 600 "${KEY_FILE}" || true
 
-    echo "   ➜ Created: ${DOMAIN_PATH}"
+    echo "   ➜ Created dummy certs for ${domain}"
 done
 
-echo "✅ Done. Dummy certs ready."
+echo "✅ All dummy certs ready."
