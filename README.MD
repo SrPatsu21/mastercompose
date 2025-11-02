@@ -20,6 +20,14 @@ GitLab  Portus  Backrest  ...
 
 ## generate cert
 
+### for ssl
+
+```shell
+./network/nginx/ssl-dhparams.pem.sh
+```
+
+### for containers
+
 ```shell
 ./network/nginx/generate-dummy-certs.sh
 ```

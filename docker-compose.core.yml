@@ -1,12 +1,10 @@
-version: "3.9"
-
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
     restart: unless-stopped
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://gitlab.local'
+        external_url 'https://gitlab.com'
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
@@ -15,25 +13,25 @@ services:
       - internal
     # No ports exposed!
 
-  portus:
-    image: opensuse/portus:head
-    restart: unless-stopped
-    environment:
-      PORTUS_MACHINE_FQDN_VALUE: portus.local
-    volumes:
-      - ./portus:/data
-    networks:
-      - internal
+  # portus:
+  #   image: opensuse/portus:head
+  #   restart: unless-stopped
+  #   environment:
+  #     PORTUS_MACHINE_FQDN_VALUE: portus.local
+  #   volumes:
+  #     - ./portus:/data
+  #   networks:
+  #     - internal
 
-  backrest:
-    image: ghcr.io/pgbackrest/backrest:latest
-    restart: unless-stopped
-    volumes:
-      - ./backups:/backups
-      - ./gitlab/data:/source/gitlab:ro
-      - ./portus:/source/portus:ro
-    networks:
-      - internal
+  # backrest:
+  #   image: ghcr.io/pgbackrest/backrest:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./backups:/backups
+  #     - ./gitlab/data:/source/gitlab:ro
+  #     - ./portus:/source/portus:ro
+  #   networks:
+  #     - internal
 
 networks:
   internal:

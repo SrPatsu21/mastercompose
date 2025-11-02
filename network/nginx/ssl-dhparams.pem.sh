@@ -1,0 +1,1 @@
+openssl dhparam -out ./network/nginx/letsencrypt/ssl-dhparams.pem 4096

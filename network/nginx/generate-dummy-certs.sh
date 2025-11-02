@@ -4,12 +4,10 @@
 # for all domains used by nginx-proxy before Let's Encrypt is ready
 # ======================================================
 
-openssl dhparam -out ./network/nginx/letsencrypt/ssl-dhparams.pem 4096
-
 DOMAINS=(
-    "backrest.example.com"
-    "gitlab.example.com"
-    "portus.example.com"
+    "backrest.com"
+    "gitlab.com"
+    "portus.com"
 )
 
 CERT_BASE="./network/nginx/letsencrypt/live"
