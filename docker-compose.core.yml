@@ -18,9 +18,8 @@ services:
   #   image: garethgeorge/backrest:v1.10.1-scratch
   #   restart: unless-stopped
   #   volumes:
-  #     - ./backups:/backups
-  #     - ./gitlab/data:/source/gitlab:ro
-  #     - ./portus:/source/portus:ro
+  #     - ./core/backups:/backups
+  #     - ./core/gitlab/data:/source/gitlab:ro
   #   networks:
   #     - internal
 

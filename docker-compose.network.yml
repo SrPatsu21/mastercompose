@@ -11,7 +11,8 @@ services:
     volumes:
       - ${NGINX_DATA}:/data
       - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
-      - ${NGINX_CUSTOM}:/etc/nginx/conf.d
+      - ${NGINX_CUSTOM}:/etc/nginx/templates
+
 
   zerotier:
     image: zerotier/zerotier:1.14.2
