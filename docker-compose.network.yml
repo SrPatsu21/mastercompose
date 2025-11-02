@@ -3,26 +3,15 @@ services:
     image: nginx:mainline-alpine-perl
     container_name: mastercompose-nginx-proxy
     restart: unless-stopped
-    ports:
-      # Only accessible to ZeroTier clients
-      - "80:80"
-      - "443:443"
-      - "30000:8080"
+    network_mode: "host"
+    env_file:
+      - .env
     environment:
       DB_SQLITE_FILE: "/data/database.sqlite"
     volumes:
-      - ./network/nginx/data:/data # UI database, settings, etc.
-      - ./network/nginx/letsencrypt:/etc/letsencrypt # Certificates
-      - ./network/nginx/custom:/etc/nginx/conf.d #manual configs
-    networks:
-      - internal
-      - zerotier
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsSL -o /dev/null -w '%{http_code}' http://localhost:80 | grep -E '200|301'"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 15s
+      - ${NGINX_DATA}:/data
+      - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
+      - ${NGINX_CUSTOM}:/etc/nginx/conf.d
 
   zerotier:
     image: zerotier/zerotier:1.14.2
@@ -30,25 +19,11 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
-      # Try removing SYS_ADMIN later; keep only if necessary.
     devices:
       - /dev/net/tun
     environment:
-      ZT_NETWORK: your_network_id
-    depends_on:
-      nginx-proxy:
-        condition: service_healthy
-    networks:
-      - zerotier
+      ZT_NETWORK: ${ZT_NETWORK}
     ports:
-      - "30001:9993"
+      - "${ZT_PORT}:9993"
     volumes:
-      - ./network/zerotier:/var/lib/zerotier-one   # Contains node identity and peers
-
-networks:
-  internal:
-    name: mastercompose_internal
-    driver: bridge   # Local-only network
-  zerotier:
-    name: mastercompose_zerotiernet
-    driver: bridge
+      - ${ZEROTIER_DATA}:/var/lib/zerotier-one
