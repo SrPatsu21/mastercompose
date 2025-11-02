@@ -1,0 +1,28 @@
+# No cert, key or pass
+*.pem
+*.secret
+
+# ZeroTier sensitive secrets
+/network/zerotier/authtoken.secret
+/network/zerotier/identity.secret
+/network/zerotier/metricstoken.secret
+
+# Runtime files (not needed in git)
+/network/zerotier/zerotier-one.pid
+/network/zerotier/zerotier-one.port
+/network/zerotier/peers.d
+/network/zerotier/planet
+/network/zerotier/metrics.prom
+
+# Let's Encrypt auto-generated certs (optional, can regenerate)
+/network/nginx/letsencrypt/live/
+/network/nginx/letsencrypt/archive/
+/network/nginx/letsencrypt/renewal/
+
+# Docker data (optional, often rebuilt)
+/network/nginx/data/*
+!/network/nginx/data/.gitkeep  # keep empty folder if needed
+
+# Logs
+*.log
+*.out

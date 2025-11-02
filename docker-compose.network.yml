@@ -1,0 +1,52 @@
+services:
+  nginx-proxy:
+    image: nginx:mainline-alpine-perl
+    container_name: mc-nginx-proxy
+    restart: unless-stopped
+    ports:
+      # Only accessible to ZeroTier clients
+      - "80:80"
+      - "443:443"
+      - "30000:8080"
+    environment:
+      DB_SQLITE_FILE: "/data/database.sqlite"
+    volumes:
+      - ./network/nginx/data:/data # UI database, settings, etc.
+      - ./network/nginx/letsencrypt:/etc/letsencrypt # Certificates
+      - ./network/nginx/custom:/etc/nginx/conf.d #manual configs
+    networks:
+      - internal
+      - zerotier
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL -o /dev/null -w '%{http_code}' http://localhost:80 | grep -E '200|301'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  zerotier:
+    image: zerotier/zerotier:1.14.2
+    container_name: mc-zerotier
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      # Try removing SYS_ADMIN later; keep only if necessary.
+    devices:
+      - /dev/net/tun
+    environment:
+      ZT_NETWORK: your_network_id
+    depends_on:
+      nginx-proxy:
+        condition: service_healthy
+    networks:
+      - zerotier
+    ports:
+      - "30001:9993"
+    volumes:
+      - ./network/zerotier:/var/lib/zerotier-one   # Contains node identity and peers
+
+networks:
+  internal:
+    driver: bridge   # Local-only network
+  zerotier:
+    driver: bridge
