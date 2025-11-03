@@ -17,25 +17,29 @@ Set up almost everything to devops
 |       |        |        |
 GitLab  Portus  Backrest  ...
 
-## generate cert
+## Network setup
+
+### NGINX
 
 ```shell
 sudo chmod +x ./network/nginx/*.sh
 ```
 
-### for ssl
+#### generate cert for ssl
 
 ```shell
 ./network/nginx/ssl-dhparams.pem.sh
 ```
 
-### for containers
+#### generate cert for containers
 
 ```shell
 ./network/nginx/generate-dummy-certs.sh
 ```
 
-## Zerotier fix files
+### Zerotier
+
+#### Zerotier fix files and port
 
 ```shell
 sudo chmod -R a+rw ./network/zerotier
@@ -45,13 +49,13 @@ sudo chmod +x ./network/zerotier/change-zt-port.sh
 ./network/zerotier/change-zt-port.sh
 ```
 
-## RUN Network
+### RUN Network
 
 ```shell
-docker compose -f docker-compose.network.yml up
+docker compose -f docker-compose.network.yml up -d
 ```
 
-## Network ID
+### Zerotier Network ID
 
 ```shell
 docker exec -it mastercompose-zerotier zerotier-cli join <NETWORK_ID>
@@ -61,11 +65,17 @@ Authorized member on my.zerotier.com/network/<NETWORK_ID>
 
 you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
-## GitLab
+## Core
+
+```shell
+docker compose -f docker-compose.core.yml up -d
+```
+
+### GitLab
 
 ```shell
 sudo chmod +x core/gitlab/init-gitlab.sh
 ./core/gitlab/init-gitlab.sh
 ```
 
-## ...
+### Backrest

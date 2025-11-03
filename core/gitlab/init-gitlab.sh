@@ -1,7 +1,13 @@
 #!/bin/bash
+
+# Load .env if it exists
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
 # Wait for GitLab to start
 echo "Waiting for GitLab to be ready..."
-until curl -s http://${ZT_ADDRS}/${GITLAB_HOST}:${GITLAB_PORT}/users/sign_in >/dev/null; do
+until curl -s https://${ZT_ADDRS}/${GITLAB_HOST}:${GITLAB_PORT}/users/sign_in >/dev/null; do
     sleep 5
 done
 
