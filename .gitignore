@@ -8,7 +8,9 @@
 /network/zerotier/metricstoken.secret
 
 # GitLab
-core/gitlab/*
+core/gitlab/config/*
+core/gitlab/data/*
+core/gitlab/logs/*
 
 # Runtime files (not needed in git)
 /network/zerotier/zerotier-one.pid
@@ -16,6 +18,7 @@ core/gitlab/*
 /network/zerotier/peers.d
 /network/zerotier/planet
 /network/zerotier/metrics.prom
+network/zerotier/controller.d/
 
 # Let's Encrypt auto-generated certs (optional, can regenerate)
 /network/nginx/letsencrypt/live/

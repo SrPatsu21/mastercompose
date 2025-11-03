@@ -11,6 +11,7 @@ services:
       - ${NGINX_DATA}:/data
       - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
       - ${NGINX_CUSTOM}:/etc/nginx/templates
+      - ${NGINX_HTML}:/etc/nginx/html
     networks:
       - internal
     ports:
@@ -29,15 +30,18 @@ services:
       - /dev/net/tun
     environment:
       ZT_NETWORK: ${ZT_NETWORK}
-    ports:
-      - "${ZT_PORT}:9993"
     volumes:
       - ${ZEROTIER_DATA}:/var/lib/zerotier-one
-    networks:
-      - internal
+    network_mode: "host"
+    # command: >
+    #   sh -c '
+    #     mkdir -p /var/lib/zerotier-one &&
+    #     echo -n "{ \"settings\": { \"primaryPort\": ${ZT_PORT:-30120} } }" > /var/lib/zerotier-one/local.conf &&
+    #     echo "ZeroTier port set to ${ZT_PORT:-30120}" &&
+    #     exec /usr/sbin/zerotier-one -d -p ${ZT_PORT:-30120}
+    #   '
 
 networks:
   internal:
     name: mastercompose_internal
-    # driver: bridge
-    external: true
+    driver: bridge

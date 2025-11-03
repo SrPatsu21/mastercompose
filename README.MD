@@ -38,6 +38,23 @@ sudo chmod +x ./network/nginx/*.sh
 ## Zerotier fix files
 
 ```shell
-sudo chmod -R a+r ./network/zerotier
+sudo chmod -R a+rw ./network/zerotier
 sudo find ./network/zerotier -type d -exec chmod a+rx {} \;
+
+sudo chmod +x ./network/zerotier/change-zt-port.sh
+./network/zerotier/change-zt-port.sh
 ```
+
+## RUN Network
+
+```shell
+docker compose -f docker-compose.network.yml up
+```
+
+## Network ID
+
+```shell
+docker exec -it mastercompose-zerotier zerotier-cli join <NETWORK_ID>
+```
+
+Authorized member on my.zerotier.com/network/<NETWORK_ID>
