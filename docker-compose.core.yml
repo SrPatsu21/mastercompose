@@ -7,9 +7,10 @@ services:
       - .env
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://${ZT_ADDRS}/${GITLAB_SERVER_NAME}/'
-        nginx['listen_port'] = ${GITLAB_PORT}
-        nginx['listen_https'] = true
+        external_url 'http://${GITLAB_SERVER_NAME}/${GITLAB_SERVER_NAME}'
+        gitlab_rails['gitlab_relative_url_root'] = '${GITLAB_SERVER_NAME}'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
         gitlab_rails['gitlab_shell_ssh_port'] = 22
         gitlab_rails['time_zone'] = 'UTC'
     ports:

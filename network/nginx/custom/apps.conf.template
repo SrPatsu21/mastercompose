@@ -70,7 +70,7 @@ server {
     # GitLab
     # =============================================
     location /${GITLAB_SERVER_NAME}/ {
-        proxy_pass http://gitlab_upstream/;
+        proxy_pass http://gitlab_upstream/${GITLAB_SERVER_NAME}/;
         proxy_set_header Host ${GITLAB_SERVER_NAME};
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
