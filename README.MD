@@ -58,3 +58,14 @@ docker exec -it mastercompose-zerotier zerotier-cli join <NETWORK_ID>
 ```
 
 Authorized member on my.zerotier.com/network/<NETWORK_ID>
+
+you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
+
+## GitLab
+
+```shell
+sudo chmod +x core/gitlab/init-gitlab.sh
+./core/gitlab/init-gitlab.sh
+```
+
+## ...

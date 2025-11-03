@@ -1,7 +1,7 @@
 #!/bin/bash
 # Wait for GitLab to start
 echo "Waiting for GitLab to be ready..."
-until curl -s http://${GITLAB_HOST}:${GITLAB_PORT}/users/sign_in >/dev/null; do
+until curl -s http://${ZT_ADDRS}/${GITLAB_HOST}:${GITLAB_PORT}/users/sign_in >/dev/null; do
     sleep 5
 done
 
