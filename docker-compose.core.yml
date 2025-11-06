@@ -10,10 +10,30 @@ services:
                 external_url 'http://${ZT_ADDRS}/${GITLAB_SERVER_NAME}'
                 gitlab_rails['gitlab_relative_url_root'] = '/${GITLAB_SERVER_NAME}'
                 gitlab_rails['gitlab_shell_ssh_port'] = 22
-                gitlab_rails['time_zone'] = 'UTC'
                 gitlab_rails['gitlab_rails_allowed_hosts'] = ['${ZT_ADDRS}']
+
                 nginx['listen_port'] = 80
                 nginx['listen_https'] = false
+
+                gitlab_rails['time_zone'] = 'UTC'
+
+                # Web server tuning
+                puma['worker_processes'] = 1
+                puma['threads_min'] = 1
+                puma['threads_max'] = 2
+
+                # Background jobs
+                sidekiq['max_concurrency'] = 2
+
+                # Disable stuff
+                gitlab_ci['enable'] = false
+                prometheus_monitoring['enable'] = false
+                alertmanager['enable'] = false
+                gitlab_exporter['enable'] = false
+
+                # Lighten Postgres
+                postgresql['max_worker_processes'] = 2
+                postgresql['shared_buffers'] = "128MB"
         ports:
             - "8022:22"  # optional SSH access if needed
         volumes:
@@ -22,6 +42,10 @@ services:
             - ./core/gitlab/data:/var/opt/gitlab
         networks:
             - internal
+        # deploy:
+        #     resources:
+        #         limits:
+        #         memory: 1500M
 
     # Optional backup service
     backrest:
