@@ -1,43 +1,43 @@
 services:
-  gitlab:
-    image: gitlab/gitlab-ce:18.4.3-ce.0
-    container_name: mastercompose-gitlab
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://${ZT_ADDRS}/${GITLAB_SERVER_NAME}'
-        gitlab_rails['gitlab_relative_url_root'] = '/${GITLAB_SERVER_NAME}'
-        gitlab_rails['gitlab_shell_ssh_port'] = 22
-        gitlab_rails['time_zone'] = 'UTC'
-        gitlab_rails['gitlab_rails_allowed_hosts'] = ['${ZT_ADDRS}']
-        nginx['listen_port'] = 80
-        nginx['listen_https'] = false
-    ports:
-      - "8022:22"  # optional SSH access if needed
-    volumes:
-      - ./core/gitlab/config:/etc/gitlab
-      - ./core/gitlab/logs:/var/log/gitlab
-      - ./core/gitlab/data:/var/opt/gitlab
-    networks:
-      - internal
+    gitlab:
+        image: gitlab/gitlab-ce:18.4.3-ce.0
+        container_name: mastercompose-gitlab
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'http://${ZT_ADDRS}/${GITLAB_SERVER_NAME}'
+                gitlab_rails['gitlab_relative_url_root'] = '/${GITLAB_SERVER_NAME}'
+                gitlab_rails['gitlab_shell_ssh_port'] = 22
+                gitlab_rails['time_zone'] = 'UTC'
+                gitlab_rails['gitlab_rails_allowed_hosts'] = ['${ZT_ADDRS}']
+                nginx['listen_port'] = 80
+                nginx['listen_https'] = false
+        ports:
+            - "8022:22"  # optional SSH access if needed
+        volumes:
+            - ./core/gitlab/config:/etc/gitlab
+            - ./core/gitlab/logs:/var/log/gitlab
+            - ./core/gitlab/data:/var/opt/gitlab
+        networks:
+            - internal
 
-  # Optional backup service
-  backrest:
-    image: garethgeorge/backrest:v1.10.1-scratch
-    container_name: mastercompose-backrest
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - ./core/backrest/config:/root/.config/backrest # persistent config + users
-      - ./core/gitlab/data:/source/gitlab:ro # data to back up
-      - ./core/backups:/backups # optional local repo
-    networks:
-      - internal
+    # Optional backup service
+    backrest:
+        image: garethgeorge/backrest:v1.10.1-scratch
+        container_name: mastercompose-backrest
+        restart: unless-stopped
+        env_file:
+            - .env
+        volumes:
+            - ./core/backrest/config:/root/.config/backrest # persistent config + users
+            - ./core/gitlab/data:/source/gitlab:ro # data to back up
+            - ./core/backups:/backups # optional local repo
+        networks:
+            - internal
 
 networks:
-  internal:
-    name: mastercompose_internal
-    external: true
+    internal:
+        name: mastercompose_internal
+        external: true

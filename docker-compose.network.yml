@@ -25,21 +25,14 @@ services:
     container_name: mastercompose-zerotier
     restart: unless-stopped
     cap_add:
-      - NET_ADMIN
+        - NET_ADMIN
     devices:
-      - /dev/net/tun
+        - /dev/net/tun
     environment:
-      ZT_NETWORK: ${ZT_NETWORK}
+        ZT_NETWORK: ${ZT_NETWORK}
     volumes:
-      - ${ZEROTIER_DATA}:/var/lib/zerotier-one
+        - ${ZEROTIER_DATA}:/var/lib/zerotier-one
     network_mode: "host"
-    # command: >
-    #   sh -c '
-    #     mkdir -p /var/lib/zerotier-one &&
-    #     echo -n "{ \"settings\": { \"primaryPort\": ${ZT_PORT:-30120} } }" > /var/lib/zerotier-one/local.conf &&
-    #     echo "ZeroTier port set to ${ZT_PORT:-30120}" &&
-    #     exec /usr/sbin/zerotier-one -d -p ${ZT_PORT:-30120}
-    #   '
 
 networks:
   internal:
