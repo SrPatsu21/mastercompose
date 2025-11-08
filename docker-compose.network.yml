@@ -17,9 +17,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - zerotier
 
+  #optinal
   zerotier:
     image: zerotier/zerotier:1.14.2
     container_name: mastercompose-zerotier
@@ -33,6 +32,18 @@ services:
     volumes:
         - ${ZEROTIER_DATA}:/var/lib/zerotier-one
     network_mode: "host"
+
+  #optinal
+  cloudflare-ddns:
+    image: oznu/cloudflare-ddns
+    container_name: mastercompose-cloudflare-ddns
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - API_KEY=${CF_API_KEY}
+      - ZONE=${CF_ZONE}
+      - SUBDOMAIN=${CF_SUBDOMAIN}
 
 networks:
   internal:
