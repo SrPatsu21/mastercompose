@@ -1,2 +1,7 @@
 world/**
 .zip
+data
+libraries
+*.bat
+*.sh
+whitelist.json

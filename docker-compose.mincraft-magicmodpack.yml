@@ -1,15 +1,17 @@
 services:
   minecraft-magicmodpack:
-    tty: true
-    stdin_open: true
     image: itzg/minecraft-server
     container_name: mastercompose-minecraft-magicmodpack
+    tty: true
+    stdin_open: true
     volumes:
-      - ./apps/minecraft-magicmodpack/world/:/data/world
+      - ./apps/minecraft-magicmodpack/world:/data/world
       - ./apps/minecraft-magicmodpack/whitelist.json:/data/whitelist.json
-      - ./apps/minecraft-magicmodpack/data/mods:/data/mods
-      - ./apps/minecraft-magicmodpack/config/:/data/config
+      - ./apps/minecraft-magicmodpack/data:/data/data
+      - ./apps/minecraft-magicmodpack/config:/data/config
+      - ./apps/minecraft-magicmodpack/libraries:/data/libraries
       - ./apps/minecraft-magicmodpack/neoforge-21.1.214-installer.jar:/data/neoforge-installer.jar
+      - ./apps/minecraft-magicmodpack/user_jvm_args.txt:/data/user_jvm_args.txt
     ports:
       - "${MAGICMODPACK_MINECRAFT_PORT}:25565"
       - "${MAGICMODPACK_RCON_PORT}:25575"
@@ -34,6 +36,6 @@ services:
       - RCON_PORT=25575
 
 networks:
-    internal:
-        name: mastercompose_internal
-        external: true
+  internal:
+    name: mastercompose_internal
+    external: true
