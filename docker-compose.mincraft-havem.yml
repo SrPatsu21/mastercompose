@@ -5,8 +5,8 @@ services:
     image: itzg/minecraft-server
     container_name: mastercompose-minecraft-haven
     volumes:
-      - ./world/:/data/world
-      - ./whitelist.json:/data/whitelist.json
+      - ./apps/minecraft-haven/world/:/data/world
+      - ./apps/minecraft-haven/whitelist.json:/data/whitelist.json
     ports:
       - "${MINECRAFT_HAVEN_PORT}:25565"
     networks:
