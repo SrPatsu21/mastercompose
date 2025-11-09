@@ -1,0 +1,31 @@
+services:
+  minecraft-haven:
+    tty: true
+    stdin_open: true
+    image: itzg/minecraft-server
+    container_name: mastercompose-minecraft-haven
+    volumes:
+      - ./world/:/data/world
+      - ./whitelist.json:/data/whitelist.json
+    ports:
+      - "${MINECRAFT_HAVEN_PORT}:25565"
+    networks:
+      - internal
+    environment:
+      - EULA=TRUE
+      - VERSION=1.21.6
+      - INIT_MEMORY=2G
+      - MAX_MEMORY=4G
+      - ONLINE_MODE=FALSE
+      - DIFFICULTY=hard
+      - MAX_PLAYERS=10
+      - VIEW_DISTANCE=16
+      - MODE=survival
+      - SERVER_NAME=Haven
+      - ENABLE_WHITELIST=FALSE
+      - ALLOW_FLIGHT=TRUE
+
+networks:
+    internal:
+        name: mastercompose_internal
+        external: true
