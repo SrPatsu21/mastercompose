@@ -11,3 +11,7 @@ wget -O ./apps/minecraft-magicmodpack/neoforge-21.1.214-installer.jar https://ma
 cd ./apps/minecraft-magicmodpack/
 java -jar neoforge-21.1.214-installer.jar --installServer
 cd ../..
+
+sudo chown -R 1000:1000 ./apps/minecraft-magicmodpack
+sudo chmod -R 775 ./apps/minecraft-magicmodpack
+chmod -R 777 ./apps/minecraft-magicmodpack/config

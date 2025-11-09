@@ -5,3 +5,4 @@ libraries
 *.bat
 *.sh
 whitelist.json
+config

@@ -7,8 +7,8 @@ services:
     volumes:
       - ./apps/minecraft-magicmodpack/world:/data/world
       - ./apps/minecraft-magicmodpack/whitelist.json:/data/whitelist.json
-      - ./apps/minecraft-magicmodpack/data:/data/data
       - ./apps/minecraft-magicmodpack/config:/data/config
+      - ./apps/minecraft-magicmodpack/data/mods:/data/mods
       - ./apps/minecraft-magicmodpack/libraries:/data/libraries
       - ./apps/minecraft-magicmodpack/neoforge-21.1.214-installer.jar:/data/neoforge-installer.jar
       - ./apps/minecraft-magicmodpack/user_jvm_args.txt:/data/user_jvm_args.txt
@@ -16,10 +16,9 @@ services:
       - "${MAGICMODPACK_MINECRAFT_PORT}:25565"
       - "${MAGICMODPACK_RCON_PORT}:25575"
     environment:
-      - TYPE=FORGE
-      - VERSION=1.21.1
-      - FORGE_INSTALLER=/data/neoforge-installer.jar
+      - TYPE=NEOFORGE
       - EULA=TRUE
+      - NEOFORGE_INSTALLER=/data/neoforge-21.1.214-installer.jar
       - AUTO_UPDATE=false
       - INIT_MEMORY=2G
       - MAX_MEMORY=6G

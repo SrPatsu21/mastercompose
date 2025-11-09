@@ -2,7 +2,7 @@ services:
   minecraft-haven:
     tty: true
     stdin_open: true
-    image: itzg/minecraft-server:1.21.6
+    image: itzg/minecraft-server
     container_name: mastercompose-minecraft-haven
     volumes:
       - ./apps/minecraft-haven/world/:/data/world
