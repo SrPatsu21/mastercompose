@@ -12,6 +12,7 @@ services:
       - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
       - ${NGINX_CUSTOM}:/etc/nginx/templates
       - ${NGINX_HTML}:/etc/nginx/html
+      - ${NGINX_SSH}:/etc/nginx/ssl
     networks:
       - internal
     ports:

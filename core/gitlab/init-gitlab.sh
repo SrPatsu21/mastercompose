@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Load .env if it exists
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)

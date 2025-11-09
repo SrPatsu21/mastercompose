@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# ======================================================
-# Auto-generate dummy self-signed certificates
-# for all domains used by nginx-proxy before Let's Encrypt is ready
-# ======================================================
-
 set -euo pipefail
+
+# Load .env if it exists
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Output folder directly mapped to Nginx
+SSL_PATH=${NGINX_SSL:-./network/nginx/ssl}
+DAYS_VALID=${DAYS_VALID:-365}
+SSL_SIZE=${SSL_SIZE:-2048}
 
 DOMAINS=(
     "dummy"
+    "${CF_ZONE}"
 )
-
-CERT_BASE="./network/nginx/letsencrypt/live"
-DAYS_VALID=365
-SSL_SIZE=2048
 
 echo "🔧 Checking and generating dummy certificates if missing..."
 for domain in "${DOMAINS[@]}"; do
-    DOMAIN_PATH="${CERT_BASE}/${domain}"
-    CERT_FILE="${DOMAIN_PATH}/fullchain.pem"
-    KEY_FILE="${DOMAIN_PATH}/privkey.pem"
+    CERT_FILE="${SSL_PATH}/${domain}-fullchain.pem"
+    KEY_FILE="${SSL_PATH}/${domain}-privkey.pem"
 
     if [[ -f "$CERT_FILE" && -f "$KEY_FILE" ]]; then
         echo "✅ Certificate already exists for ${domain}"
@@ -26,7 +27,7 @@ for domain in "${DOMAINS[@]}"; do
     fi
 
     echo "🚧 Creating dummy cert for ${domain}..."
-    mkdir -p "$DOMAIN_PATH"
+    mkdir -p "$SSL_PATH"
 
     openssl req -x509 -nodes -newkey rsa:${SSL_SIZE} \
         -days ${DAYS_VALID} \
@@ -35,8 +36,7 @@ for domain in "${DOMAINS[@]}"; do
         -subj "/CN=${domain}" \
         -addext "subjectAltName=DNS:${domain}" >/dev/null 2>&1
 
-    cp -f "${CERT_FILE}" "${DOMAIN_PATH}/cert.pem" >/dev/null 2>&1 || true
-    chmod 644 "${CERT_FILE}" "${DOMAIN_PATH}/cert.pem" || true
+    chmod 644 "${CERT_FILE}" || true
     chmod 600 "${KEY_FILE}" || true
 
     echo "   ➜ Created dummy certs for ${domain}"
