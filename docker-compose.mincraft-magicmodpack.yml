@@ -1,0 +1,39 @@
+services:
+  minecraft-magicmodpack:
+    tty: true
+    stdin_open: true
+    image: itzg/minecraft-server
+    container_name: mastercompose-minecraft-magicmodpack
+    volumes:
+      - ./apps/minecraft-magicmodpack/world/:/data/world
+      - ./apps/minecraft-magicmodpack/whitelist.json:/data/whitelist.json
+      - ./apps/minecraft-magicmodpack/data/mods:/data/mods
+      - ./apps/minecraft-magicmodpack/config/:/data/config
+      - ./apps/minecraft-magicmodpack/neoforge-21.1.214-installer.jar:/data/neoforge-installer.jar
+    ports:
+      - "${MAGICMODPACK_MINECRAFT_PORT}:25565"
+      - "${MAGICMODPACK_RCON_PORT}:25575"
+    environment:
+      - TYPE=FORGE
+      - VERSION=1.21.1
+      - FORGE_INSTALLER=/data/neoforge-installer.jar
+      - EULA=TRUE
+      - AUTO_UPDATE=false
+      - INIT_MEMORY=2G
+      - MAX_MEMORY=6G
+      - ONLINE_MODE=FALSE
+      - DIFFICULTY=hard
+      - MAX_PLAYERS=10
+      - VIEW_DISTANCE=16
+      - MODE=survival
+      - SERVER_NAME=MagicModPack
+      - ENABLE_WHITELIST=FALSE
+      - ALLOW_FLIGHT=TRUE
+      - ENABLE_RCON=TRUE
+      - RCON_PASSWORD=${MAGICMODPACK_RCON_PORT}
+      - RCON_PORT=25575
+
+networks:
+    internal:
+        name: mastercompose_internal
+        external: true
