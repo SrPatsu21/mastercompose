@@ -9,6 +9,7 @@
 /network/zerotier/authtoken.secret
 /network/zerotier/identity.secret
 /network/zerotier/metricstoken.secret
+/network/zerotier/networks.d/
 
 # GitLab
 core/gitlab/config/*
