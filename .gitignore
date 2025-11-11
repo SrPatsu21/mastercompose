@@ -9,7 +9,7 @@
 /network/zerotier/authtoken.secret
 /network/zerotier/identity.secret
 /network/zerotier/metricstoken.secret
-/network/zerotier/networks.d/
+/network/zerotier/networks.d
 
 # GitLab
 core/gitlab/config/*
@@ -39,3 +39,6 @@ network/zerotier/controller.d/
 
 # Cloudflare
 network/cloudflared/*.json
+
+# backrest
+core/backrest/config/*.yaml

@@ -16,15 +16,15 @@ services:
 
     # Optional backup service
     backrest:
-        image: garethgeorge/backrest:v1.10.1-scratch
+        image: garethgeorge/backrest:v1.10.1
         container_name: mastercompose-backrest
         restart: unless-stopped
         env_file:
             - .env
         volumes:
-            - ./core/backrest/config:/root/.config/backrest # persistent config + users
-            - ./core/gitlab/data:/source/gitlab:ro # data to back up
-            - ./core/backups:/backups # optional local repo
+            - ./core/backrest/config:/config
+            - ./core/gitlab/data:/source/gitlab:ro
+            - ./core/backups:/backups
         networks:
             - internal
 

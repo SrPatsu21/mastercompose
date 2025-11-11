@@ -79,10 +79,6 @@ you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
 ## Core
 
-```shell
-docker compose -f docker-compose.core.yml up -d
-```
-
 ### GitLab
 
 ```shell
@@ -91,3 +87,16 @@ sudo chmod +x core/gitlab/init-gitlab.sh
 ```
 
 ### Backrest
+
+#### set users
+
+```shell
+sudo chmod +x ./core/backrest/config/make_users.sh
+sudo ./core/backrest/config/make_users.sh
+```
+
+### start core
+
+```shell
+docker compose -f docker-compose.core.yml up -d
+```
