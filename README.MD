@@ -37,6 +37,18 @@ sudo chmod +x ./network/nginx/*.sh
 ./network/nginx/generate-dummy-certs.sh
 ```
 
+### Cloudflare login
+
+```shell
+sudo mkdir -p ./network/cloudflared
+sudo chmod 777 ./network/cloudflared
+docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel login
+sudo docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel create my-tunel
+docker exec -it mastercompose-cloudflared cloudflared tunnel route dns my-tunel paulosergio.pierdona.nom.br
+```
+
+no A, AAAA if u use tunel
+
 ### Zerotier
 
 #### Zerotier fix files and port

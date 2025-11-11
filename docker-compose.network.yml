@@ -35,16 +35,17 @@ services:
     network_mode: "host"
 
   #optinal
-  cloudflare-ddns:
-    image: oznu/cloudflare-ddns
-    container_name: mastercompose-cloudflare-ddns
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - API_KEY=${CF_API_KEY}
-      - ZONE=${CF_ZONE}
-      - SUBDOMAIN=${CF_SUBDOMAIN}
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: mastercompose-cloudflared
+    restart: unless-stopped
+    depends_on:
+      - nginx-proxy
+    networks:
+      - internal
+    volumes:
+      - ./network/cloudflared:/etc/cloudflared
+    command: tunnel --config /etc/cloudflared/config.yml run
 
 networks:
   internal:

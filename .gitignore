@@ -35,3 +35,6 @@ network/zerotier/controller.d/
 # Logs
 *.log
 *.out
+
+# Cloudflare
+network/cloudflared/*.json

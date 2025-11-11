@@ -1,0 +1,9 @@
+tunnel: 59f458cf-83ff-44ef-a99d-060aeb593a27
+credentials-file: /etc/cloudflared/59f458cf-83ff-44ef-a99d-060aeb593a27.json
+
+ingress:
+  - hostname: paulosergio.pierdona.nom.br
+    service: https://mastercompose-nginx-proxy:443
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404
