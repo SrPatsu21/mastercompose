@@ -12,7 +12,7 @@ echo ">>> Applying config for GitLab on $GITLAB_RB"
 
 # Write dynamic config using env expansion
 cat > "$GITLAB_RB" <<EOF
-external_url 'http://${ZT_ADDRS}/${GITLAB_SERVER_NAME}'
+external_url "https://${CF_HOSTNAME}/${GITLAB_SERVER_NAME}"
 gitlab_rails['gitlab_relative_url_root'] = '/${GITLAB_SERVER_NAME}'
 gitlab_rails['gitlab_shell_ssh_port'] = 22
 gitlab_rails['gitlab_rails_allowed_hosts'] = ['${ZT_ADDRS}']

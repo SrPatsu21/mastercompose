@@ -41,4 +41,4 @@ network/zerotier/controller.d/
 network/cloudflared/*.json
 
 # backrest
-core/backrest/config/*.yaml
+core/backrest/config/users.yaml
