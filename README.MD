@@ -79,13 +79,6 @@ you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
 ## Core
 
-### GitLab
-
-```shell
-sudo chmod +x core/gitlab/init-gitlab.sh
-./core/gitlab/init-gitlab.sh
-```
-
 ### Backrest
 
 #### set users
@@ -99,4 +92,14 @@ sudo ./core/backrest/config/make_users.sh
 
 ```shell
 docker compose -f docker-compose.core.yml up -d
+```
+
+### Forgejo user
+
+```shell
+docker exec -u 1000 -it mastercompose-forgejo /usr/local/bin/gitea admin user create \
+  --username SrPatsu21 \
+  --password ADMIN \
+  --email paulosergiopierdona@gmail.com \
+  --admin
 ```

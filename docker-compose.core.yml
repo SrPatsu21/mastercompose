@@ -1,18 +1,77 @@
 services:
-    gitlab:
-        image: gitlab/gitlab-ce:18.4.3-ce.0
-        container_name: mastercompose-gitlab
+
+#* Forgero
+    forgejo:
+        image: codeberg.org/forgejo/forgejo:13
+        container_name: mastercompose-forgejo
         restart: unless-stopped
         env_file:
             - .env
+        environment:
+            - USER_UID=1000
+            - USER_GID=1000
+
+            # Database
+            - FORGEJO__database__DB_TYPE=postgres
+            - FORGEJO__database__HOST=${FORGEJO_DB_HOST}
+            - FORGEJO__database__NAME=${FORGEJO_DB_NAME}
+            - FORGEJO__database__USER=${FORGEJO_DB_USER}
+            - FORGEJO__database__PASSWD=${FORGEJO_DB_PASS}
+
+            # Server
+            - FORGEJO__server__DOMAIN=${FORGEJO_SERVER_DOMAIN}
+            - FORGEJO__server__ROOT_URL=${FORGEJO_SERVER_ROOT_URL}
+            - FORGEJO__server__HTTP_PORT=${FORGEJO_HTTP_PORT}
+            - FORGEJO__server__SSH_DOMAIN=${FORGEJO_SERVER_DOMAIN}
+            - FORGEJO__server__START_SSH_SERVER=true
+            - FORGEJO__server__SSH_PORT=2222
+            - FORGEJO__server__SSH_LISTEN_PORT=2222
+
+            # Security and registration
+            - FORGEJO__service__DISABLE_REGISTRATION=true
+
+            # MAIL
+            - FORGEJO__mailer__ENABLED=true
+            - FORGEJO__mailer__FROM=${FORGEJO_MAILER_FROM}
+            - FORGEJO__mailer__PROTOCOL=${FORGEJO_MAILER_PROTOCOL}
+            - FORGEJO__mailer__SMTP_ADDR=${FORGEJO_MAILER_SMTP_ADDR}
+            - FORGEJO__mailer__SMTP_PORT=${FORGEJO_MAILER_SMTP_PORT}
+            - FORGEJO__mailer__USER=${FORGEJO_MAILER_USER}
+            - FORGEJO__mailer__PASS=${FORGEJO_MAILER_PASS}
+            - FORGEJO__service__ENABLE_NOTIFY_MAIL=${FORGEJO_SERVICE_ENABLE_NOTIFY_MAIL}
+            - FORGEJO__service__REGISTER_EMAIL_CONFIRM=${FORGEJO_SERVICE_REGISTER_EMAIL_CONFIRM}
+
+            # Optional: Auto-create admin user
+            - FORGEJO__security__INSTALL_LOCK=true
+            - FORGEJO__security__SECRET_KEY=$(openssl rand -hex 32)
+            - FORGEJO__admin__USER=${FORGEJO_USER}
+            - FORGEJO__admin__PASSWORD=${FORGEJO_PASSWORD}
+            - FORGEJO__admin__EMAIL=${FORGEJO_EMAIL}
+
+            # Others
+            - FORGEJO__service__REQUIRE_SIGNIN_VIEW=false
         ports:
-            - "8022:22"  # optional SSH access if needed
+            - "${FORGEJO_SSH_PORT}:2222" # SSH access
         volumes:
-            - ./core/gitlab/config:/etc/gitlab
-            - ./core/gitlab/logs:/var/log/gitlab
-            - ./core/gitlab/data:/var/opt/gitlab
+            - ./core/forgejo/data:/data
         networks:
             - internal
+            - forgejo
+        depends_on:
+            - forgejo_db
+
+    forgejo_db:
+        image: postgres:14
+        container_name: mastercompose-forgejo_db
+        restart: always
+        environment:
+            - POSTGRES_USER=${FORGEJO_DB_USER}
+            - POSTGRES_PASSWORD=${FORGEJO_DB_PASS}
+            - POSTGRES_DB=${FORGEJO_DB_NAME}
+        networks:
+            - forgejo
+        volumes:
+            - ./core/forgejo/postgres:/var/lib/postgresql/data
 
     # Optional backup service
     backrest:
@@ -32,3 +91,6 @@ networks:
     internal:
         name: mastercompose_internal
         external: true
+    forgejo:
+        name: mastercompose_forgejo
+        external: false

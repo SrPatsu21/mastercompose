@@ -11,11 +11,6 @@
 /network/zerotier/metricstoken.secret
 /network/zerotier/networks.d
 
-# GitLab
-core/gitlab/config/*
-core/gitlab/data/*
-core/gitlab/logs/*
-
 # Runtime files (not needed in git)
 /network/zerotier/zerotier-one.pid
 /network/zerotier/zerotier-one.port
@@ -42,3 +37,7 @@ network/cloudflared/*.json
 
 # backrest
 core/backrest/config/users.yaml
+
+# Forgejo
+core/forgejo/data
+core/forgejo/postgres

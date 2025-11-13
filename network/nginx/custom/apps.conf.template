@@ -6,9 +6,9 @@ resolver 127.0.0.11 valid=30s ipv6=off;
 # =============================================
 # Upstreams
 # =============================================
-upstream gitlab_upstream {
-    zone gitlab_upstream 64k;
-    server ${GITLAB_HOST}:${GITLAB_PORT} resolve max_fails=0 fail_timeout=0;
+upstream forgejo_upstream {
+    zone forgejo_upstream 64k;
+    server ${FORGEJO_HOST}:${FORGEJO_HTTP_PORT} resolve max_fails=0 fail_timeout=0;
     keepalive 16;
 }
 
@@ -68,11 +68,11 @@ server {
     }
 
     # =============================================
-    # GitLab
+    # Forgejo
     # =============================================
-    location /${GITLAB_SERVER_NAME}/ {
-        proxy_pass http://gitlab_upstream/${GITLAB_SERVER_NAME}/;
-        proxy_set_header Host ${GITLAB_SERVER_NAME};
+    location /${FORGEJO_SERVER_NAME}/ {
+        proxy_pass http://forgejo_upstream/;
+        proxy_set_header Host ${FORGEJO_SERVER_NAME};
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
