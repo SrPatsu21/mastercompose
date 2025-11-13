@@ -32,21 +32,19 @@ services:
 
             # MAIL
             - FORGEJO__mailer__ENABLED=true
-            - FORGEJO__mailer__FROM=${FORGEJO_MAILER_FROM}
-            - FORGEJO__mailer__PROTOCOL=${FORGEJO_MAILER_PROTOCOL}
-            - FORGEJO__mailer__SMTP_ADDR=${FORGEJO_MAILER_SMTP_ADDR}
-            - FORGEJO__mailer__SMTP_PORT=${FORGEJO_MAILER_SMTP_PORT}
+            - FORGEJO__mailer__FROM=Forgejo<noreply@paulosergio.pierdona.nom.br>
             - FORGEJO__mailer__USER=${FORGEJO_MAILER_USER}
             - FORGEJO__mailer__PASS=${FORGEJO_MAILER_PASS}
+            - FORGEJO__mailer__PROTOCOL=smtps
+            - FORGEJO__mailer__SMTP_ADDR=smtp.gmail.com
+            - FORGEJO__mailer__SMTP_PORT=465
+
             - FORGEJO__service__ENABLE_NOTIFY_MAIL=${FORGEJO_SERVICE_ENABLE_NOTIFY_MAIL}
             - FORGEJO__service__REGISTER_EMAIL_CONFIRM=${FORGEJO_SERVICE_REGISTER_EMAIL_CONFIRM}
 
             # Optional: Auto-create admin user
             - FORGEJO__security__INSTALL_LOCK=true
             - FORGEJO__security__SECRET_KEY=$(openssl rand -hex 32)
-            - FORGEJO__admin__USER=${FORGEJO_USER}
-            - FORGEJO__admin__PASSWORD=${FORGEJO_PASSWORD}
-            - FORGEJO__admin__EMAIL=${FORGEJO_EMAIL}
 
             # Others
             - FORGEJO__service__REQUIRE_SIGNIN_VIEW=false
@@ -82,7 +80,6 @@ services:
             - .env
         volumes:
             - ./core/backrest/config:/config
-            - ./core/gitlab/data:/source/gitlab:ro
             - ./core/backups:/backups
         networks:
             - internal

@@ -101,5 +101,6 @@ docker exec -u 1000 -it mastercompose-forgejo /usr/local/bin/gitea admin user cr
   --username SrPatsu21 \
   --password ADMIN \
   --email paulosergiopierdona@gmail.com \
-  --admin
+  --admin \
+  --must-change-password=true
 ```
