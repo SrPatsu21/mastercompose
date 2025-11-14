@@ -48,10 +48,25 @@ services:
 
             # Others
             - FORGEJO__service__REQUIRE_SIGNIN_VIEW=false
+
+            # LFS server
+            - FORGEJO__server__LFS_START_SERVER=true
+            - FORGEJO__lfs__PATH=/data/git/lfs
+
+            # Registry
+            - FORGEJO__server__ENABLE_CONTAINER_REGISTRY=${FORGEJO_SERVICE_ENABLE_CONTAINER_REGISTRY}
+            - FORGEJO__registry__REGISTRY_PATH=/data/registry
+            - FORGEJO__registry__REGISTRY_STORAGE=local
+
+            # Avatar
+            - FORGEJO__picture__AVATAR_UPLOAD_PATH=/data/gitea/avatars
+            - FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH=/data/gitea/repo-avatars
         ports:
             - "${FORGEJO_SSH_PORT}:2222" # SSH access
         volumes:
             - ./core/forgejo/data:/data
+            - ./core/forgejo/lfs:/data/git/lfs
+
         networks:
             - internal
             - forgejo
