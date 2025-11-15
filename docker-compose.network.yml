@@ -8,11 +8,11 @@ services:
     environment:
       DB_SQLITE_FILE: "/data/database.sqlite"
     volumes:
-      - ${NGINX_DATA}:/data
-      - ${NGINX_LETSENCRYPT}:/etc/letsencrypt
-      - ${NGINX_CUSTOM}:/etc/nginx/templates
-      - ${NGINX_HTML}:/etc/nginx/html
-      - ${NGINX_SSH}:/etc/nginx/ssl
+      - ./network/nginx/data:/data
+      - ./network/nginx/letsencrypt:/etc/letsencrypt
+      - ./network/nginx/custom:/etc/nginx/templates
+      - ./network/nginx/html:/etc/nginx/html
+      - ./network/nginx/ssl:/etc/nginx/ssl
     networks:
       - internal
     ports:

@@ -12,8 +12,10 @@ DAYS_VALID=${DAYS_VALID:-365}
 SSL_SIZE=${SSL_SIZE:-2048}
 
 DOMAINS=(
-    "dummy"
-    "${CF_ZONE}"
+    "${CF_HOSTNAME}"
+    "git.${CF_HOSTNAME}"
+    "registry.${CF_HOSTNAME}"
+    "backrest.${CF_HOSTNAME}"
 )
 
 echo "🔧 Checking and generating dummy certificates if missing..."

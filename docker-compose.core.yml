@@ -13,7 +13,7 @@ services:
 
             # Database
             - FORGEJO__database__DB_TYPE=postgres
-            - FORGEJO__database__HOST=${FORGEJO_DB_HOST}
+            - FORGEJO__database__HOST=${FORGEJO_DB_HOST}:5432
             - FORGEJO__database__NAME=${FORGEJO_DB_NAME}
             - FORGEJO__database__USER=${FORGEJO_DB_USER}
             - FORGEJO__database__PASSWD=${FORGEJO_DB_PASS}
@@ -57,12 +57,15 @@ services:
             - FORGEJO__server__ENABLE_CONTAINER_REGISTRY=${FORGEJO_SERVICE_ENABLE_CONTAINER_REGISTRY}
             - FORGEJO__registry__REGISTRY_PATH=/data/registry
             - FORGEJO__registry__REGISTRY_STORAGE=local
+            - FORGEJO__registry__HTTP_ADDR=0.0.0.0
+            - FORGEJO__registry__HTTP_PORT=5000
 
             # Avatar
             - FORGEJO__picture__AVATAR_UPLOAD_PATH=/data/gitea/avatars
             - FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH=/data/gitea/repo-avatars
         ports:
             - "${FORGEJO_SSH_PORT}:2222" # SSH access
+            - "${FORGEJO_SERVICE_REGISTRY_PORT}:5000"
         volumes:
             - ./core/forgejo/data:/data
             - ./core/forgejo/lfs:/data/git/lfs
