@@ -7,115 +7,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
     <link rel="icon" href="data:,">
-
     <title>Painel de Serviços - Servidor do Paulo Sérgio</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Tailwind custom -->
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'gray-750': '#2a2f38'
-                    }
-                }
-            }
+            theme: { extend: { colors: { 'gray-750': '#2a2f38' } } }
         };
     </script>
 
     <style>
-        /* Animação de transição suave tema */
         .theme-transition * {
             transition: color 0.3s, background 0.3s, border-color 0.3s;
         }
     </style>
 </head>
 
-<body class="bg-gray-900 dark:bg-gray-900 text-gray-200 dark:text-gray-200 h-full font-sans theme-transition">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 h-full font-sans theme-transition">
 
-    <!-- CONTAINER -->
     <div class="min-h-screen flex flex-col items-center justify-start px-4 pt-10">
 
-        <!-- SWITCH DE TEMA -->
         <div class="absolute top-5 right-5">
             <button id="themeToggle"
-                class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 shadow">
+                class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 shadow">
                 🌙
             </button>
         </div>
 
-        <!-- HEADER -->
         <header class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-white drop-shadow-lg dark:text-white">
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white drop-shadow-lg">
                 🖥️ Painel de Serviços
             </h1>
-            <p class="text-gray-400 mt-2 dark:text-gray-400">
+            <p class="text-gray-600 dark:text-gray-400 mt-2">
                 Escolha um serviço para acessar
             </p>
         </header>
 
-        <!-- GRID DE CARDS -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
 
-            <!-- CARD: FORGEJO -->
             <a href="https://git.paulosergio.pierdona.nom.br/" target="_blank"
-                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-blue-500 transition shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
+                class="relative p-6 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 transition shadow-lg hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
                 
-                <img src="https://forgejo.org/images/logo.svg" class="w-12 h-12 opacity-90" alt="Forgejo">
+                <div id="status-forgejo" class="w-3 h-3 rounded-full bg-red-500 absolute top-3 right-3"></div>
 
-                <h2 class="text-xl font-bold text-blue-400">Forgejo</h2>
-                <p class="text-gray-300 text-sm dark:text-gray-300">
+                <img src="https://forgejo.org/images/logo.svg" class="w-12 h-12 opacity-90">
+                <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400">Forgejo</h2>
+                <p class="text-gray-700 dark:text-gray-300 text-sm">
                     Repositórios Git, CI/CD e projetos.
                 </p>
             </a>
 
-            <!-- CARD: BACKREST -->
             <a href="https://backrest.paulosergio.pierdona.nom.br/" target="_blank"
-                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-green-500 transition shadow-lg hover:shadow-green-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
-                
-                <img src="https://raw.githubusercontent.com/pgbackrest/pgbackrest/master/doc/logo/pgbackrest.svg"
-                     class="w-12 h-12 opacity-90" alt="Backrest">
+                class="relative p-6 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 transition shadow-lg hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
 
-                <h2 class="text-xl font-bold text-green-400">Backrest</h2>
-                <p class="text-gray-300 text-sm dark:text-gray-300">
+                <div id="status-backrest" class="w-3 h-3 rounded-full bg-red-500 absolute top-3 right-3"></div>
+
+                <img src="https://raw.githubusercontent.com/pgbackrest/pgbackrest/master/doc/logo/pgbackrest.svg"
+                     class="w-12 h-12 opacity-90">
+                <h2 class="text-xl font-bold text-green-600 dark:text-green-400">Backrest</h2>
+                <p class="text-gray-700 dark:text-gray-300 text-sm">
                     Sistema de backups e snapshots.
                 </p>
             </a>
 
-            <!-- CARD: REGISTRY DOCKER -->
             <a href="https://registry.paulosergio.pierdona.nom.br" target="_blank"
-                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-yellow-500 transition shadow-lg hover:shadow-yellow-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
+                class="relative p-6 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 transition shadow-lg hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
                 
-                <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png"
-                     class="w-12 h-12 opacity-90" alt="Docker Registry">
+                <div id="status-registry" class="w-3 h-3 rounded-full bg-red-500 absolute top-3 right-3"></div>
 
-                <h2 class="text-xl font-bold text-yellow-400">Docker Registry</h2>
-                <p class="text-gray-300 text-sm dark:text-gray-300">
+                <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png"
+                     class="w-12 h-12 opacity-90">
+                <h2 class="text-xl font-bold text-yellow-600 dark:text-yellow-400">Docker Registry</h2>
+                <p class="text-gray-700 dark:text-gray-300 text-sm">
                     Registro privado de imagens Docker.
                 </p>
             </a>
 
-            <!-- CARD EXTRA (opcional futuro) -->
-            <div class="p-6 rounded-xl bg-gray-800 border border-gray-700 opacity-40 flex flex-col gap-3 cursor-not-allowed">
-                <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
-                <h2 class="text-xl font-bold text-gray-400">Em breve</h2>
+            <div class="p-6 rounded-xl bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 opacity-40 flex flex-col gap-3 cursor-not-allowed">
+                <div class="w-12 h-12 bg-gray-400 dark:bg-gray-700 rounded-full"></div>
+                <h2 class="text-xl font-bold text-gray-500">Em breve</h2>
                 <p class="text-gray-500 text-sm">Novo serviço será adicionado.</p>
             </div>
 
         </div>
 
-        <!-- FOOTER -->
-        <footer class="mt-10 mb-5 text-gray-500 text-sm">
+        <footer class="mt-10 mb-5 text-gray-600 dark:text-gray-500 text-sm">
             © <span id="year"></span> - Servidor do Paulo Sérgio · Nginx
         </footer>
 
     </div>
 
     <script>
-        // Alternância tema claro/escuro
         const btn = document.getElementById("themeToggle");
         const html = document.documentElement;
 
@@ -125,14 +108,36 @@
             btn.textContent = html.classList.contains("dark") ? "🌞" : "🌙";
         });
 
-        // Mantém o tema escolhido
         if (localStorage.getItem("theme") === "dark") {
             html.classList.add("dark");
             btn.textContent = "🌞";
         }
 
-        // Ano no rodapé
         document.getElementById("year").textContent = new Date().getFullYear();
+
+        async function testarServico(url, elementoIndicador) {
+            elementoIndicador.classList.remove("bg-red-500", "bg-green-500");
+            elementoIndicador.classList.add("bg-yellow-400");
+            try {
+                await fetch(url, { method: "HEAD", mode: "no-cors" });
+                elementoIndicador.classList.remove("bg-yellow-400");
+                elementoIndicador.classList.add("bg-green-500");
+            } catch (e) {
+                elementoIndicador.classList.remove("bg-yellow-400");
+                elementoIndicador.classList.add("bg-red-500");
+            }
+        }
+
+        const servicos = [
+            { url: "https://git.paulosergio.pierdona.nom.br/", id: "status-forgejo" },
+            { url: "https://backrest.paulosergio.pierdona.nom.br/", id: "status-backrest" },
+            { url: "https://registry.paulosergio.pierdona.nom.br", id: "status-registry" }
+        ];
+
+        servicos.forEach(s => {
+            const el = document.getElementById(s.id);
+            if (el) testarServico(s.url, el);
+        });
     </script>
 
 </body>
