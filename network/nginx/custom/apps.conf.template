@@ -120,6 +120,9 @@ server {
 
     include /etc/letsencrypt/options-ssl-nginx.conf;
 
+    client_max_body_size 5G;
+
+
     location / {
         proxy_pass http://forgejo_registry_upstream;
         proxy_set_header Host $host;
