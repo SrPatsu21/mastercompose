@@ -11,6 +11,10 @@ services:
             - USER_UID=1000
             - USER_GID=1000
 
+            # Storage geral
+            - FORGEJO__storage__STORAGE_TYPE=local
+            - FORGEJO__storage__PATH=/data
+
             # Database
             - FORGEJO__database__DB_TYPE=postgres
             - FORGEJO__database__HOST=${FORGEJO_DB_HOST}:5432
@@ -42,34 +46,32 @@ services:
             - FORGEJO__service__ENABLE_NOTIFY_MAIL=${FORGEJO_SERVICE_ENABLE_NOTIFY_MAIL}
             - FORGEJO__service__REGISTER_EMAIL_CONFIRM=${FORGEJO_SERVICE_REGISTER_EMAIL_CONFIRM}
 
-            # Optional: Auto-create admin user
+            # Optional: Auto-create admin
             - FORGEJO__security__INSTALL_LOCK=true
             - FORGEJO__security__SECRET_KEY=$(openssl rand -hex 32)
 
             # Others
             - FORGEJO__service__REQUIRE_SIGNIN_VIEW=false
 
-            # LFS server
+            # LFS
             - FORGEJO__server__LFS_START_SERVER=true
             - FORGEJO__lfs__PATH=/data/git/lfs
 
             # Registry
-            - FORGEJO__server__ENABLE_CONTAINER_REGISTRY=${FORGEJO_SERVICE_ENABLE_CONTAINER_REGISTRY}
-            - FORGEJO__registry__REGISTRY_PATH=/data/registry
-            - FORGEJO__registry__REGISTRY_STORAGE=local
+            - FORGEJO__registry__ENABLED=true
+            - FORGEJO__registry__STORAGE=local
+            - FORGEJO__registry__STORAGE_PATH=/data/registry
             - FORGEJO__registry__HTTP_ADDR=0.0.0.0
-            - FORGEJO__registry__HTTP_PORT=5000
+            - FORGEJO__registry__HTTP_PORT=${FORGEJO_SERVICE_REGISTRY_PORT}
 
-            # Avatar
+            # Avatars
             - FORGEJO__picture__AVATAR_UPLOAD_PATH=/data/gitea/avatars
             - FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH=/data/gitea/repo-avatars
         ports:
             - "${FORGEJO_SSH_PORT}:2222" # SSH access
-            - "${FORGEJO_SERVICE_REGISTRY_PORT}:5000"
+            - "${FORGEJO_SERVICE_REGISTRY_PORT}:${FORGEJO_SERVICE_REGISTRY_PORT}"
         volumes:
             - ./core/forgejo/data:/data
-            - ./core/forgejo/lfs:/data/git/lfs
-
         networks:
             - internal
             - forgejo

@@ -88,6 +88,16 @@ sudo chmod +x ./core/backrest/config/make_users.sh
 sudo ./core/backrest/config/make_users.sh
 ```
 
+### Forgejo folders
+"
+mkdir -p core/forgejo/data/registry
+mkdir -p core/forgejo/data/git/lfs
+mkdir -p core/forgejo/data/gitea/avatars
+mkdir -p core/forgejo/data/gitea/repo-avatars
+
+sudo chown -R 1000:1000 core/forgejo/data
+"
+
 ### start core
 
 ```shell
