@@ -17,6 +17,7 @@ services:
       - "${MAGICMODPACK_RCON_PORT}:25575"
     environment:
       - TYPE=NEOFORGE
+      - VERSION=1.21.1
       - EULA=TRUE
       - NEOFORGE_INSTALLER=/data/neoforge-21.1.214-installer.jar
       - AUTO_UPDATE=false

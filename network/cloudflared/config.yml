@@ -1,5 +1,5 @@
-tunnel: 59f458cf-83ff-44ef-a99d-060aeb593a27
-credentials-file: /etc/cloudflared/59f458cf-83ff-44ef-a99d-060aeb593a27.json
+tunnel: 37252a1b-0e86-4970-a568-9eff97d897a1
+credentials-file: /etc/cloudflared/37252a1b-0e86-4970-a568-9eff97d897a1.json
 
 ingress:
   - hostname: paulosergio.pierdona.nom.br

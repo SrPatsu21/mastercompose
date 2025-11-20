@@ -1,12 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <link rel="icon" href="data:,">
+
+    <title>Painel de Serviços - Servidor do Paulo Sérgio</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind custom -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-750': '#2a2f38'
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* Animação de transição suave tema */
+        .theme-transition * {
+            transition: color 0.3s, background 0.3s, border-color 0.3s;
+        }
+    </style>
 </head>
-<body>
-    <h1>Welcome to the server</h1>
-    <p>Forgejo is available at <a href="/forgejo/">/forgejo/</a></p>
-    <p>Backrest is available at <a href="/backrest/">/backrest/</a></p>
+
+<body class="bg-gray-900 dark:bg-gray-900 text-gray-200 dark:text-gray-200 h-full font-sans theme-transition">
+
+    <!-- CONTAINER -->
+    <div class="min-h-screen flex flex-col items-center justify-start px-4 pt-10">
+
+        <!-- SWITCH DE TEMA -->
+        <div class="absolute top-5 right-5">
+            <button id="themeToggle"
+                class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 shadow">
+                🌙
+            </button>
+        </div>
+
+        <!-- HEADER -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-white drop-shadow-lg dark:text-white">
+                🖥️ Painel de Serviços
+            </h1>
+            <p class="text-gray-400 mt-2 dark:text-gray-400">
+                Escolha um serviço para acessar
+            </p>
+        </header>
+
+        <!-- GRID DE CARDS -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
+
+            <!-- CARD: FORGEJO -->
+            <a href="https://git.paulosergio.pierdona.nom.br/" target="_blank"
+                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-blue-500 transition shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
+                
+                <img src="https://forgejo.org/images/logo.svg" class="w-12 h-12 opacity-90" alt="Forgejo">
+
+                <h2 class="text-xl font-bold text-blue-400">Forgejo</h2>
+                <p class="text-gray-300 text-sm dark:text-gray-300">
+                    Repositórios Git, CI/CD e projetos.
+                </p>
+            </a>
+
+            <!-- CARD: BACKREST -->
+            <a href="https://backrest.paulosergio.pierdona.nom.br/" target="_blank"
+                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-green-500 transition shadow-lg hover:shadow-green-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
+                
+                <img src="https://raw.githubusercontent.com/pgbackrest/pgbackrest/master/doc/logo/pgbackrest.svg"
+                     class="w-12 h-12 opacity-90" alt="Backrest">
+
+                <h2 class="text-xl font-bold text-green-400">Backrest</h2>
+                <p class="text-gray-300 text-sm dark:text-gray-300">
+                    Sistema de backups e snapshots.
+                </p>
+            </a>
+
+            <!-- CARD: REGISTRY DOCKER -->
+            <a href="https://registry.paulosergio.pierdona.nom.br" target="_blank"
+                class="p-6 rounded-xl bg-gray-800 dark:bg-gray-800 border border-gray-700 hover:border-yellow-500 transition shadow-lg hover:shadow-yellow-500/30 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-start gap-3">
+                
+                <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png"
+                     class="w-12 h-12 opacity-90" alt="Docker Registry">
+
+                <h2 class="text-xl font-bold text-yellow-400">Docker Registry</h2>
+                <p class="text-gray-300 text-sm dark:text-gray-300">
+                    Registro privado de imagens Docker.
+                </p>
+            </a>
+
+            <!-- CARD EXTRA (opcional futuro) -->
+            <div class="p-6 rounded-xl bg-gray-800 border border-gray-700 opacity-40 flex flex-col gap-3 cursor-not-allowed">
+                <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
+                <h2 class="text-xl font-bold text-gray-400">Em breve</h2>
+                <p class="text-gray-500 text-sm">Novo serviço será adicionado.</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-10 mb-5 text-gray-500 text-sm">
+            © <span id="year"></span> - Servidor do Paulo Sérgio · Nginx
+        </footer>
+
+    </div>
+
+    <script>
+        // Alternância tema claro/escuro
+        const btn = document.getElementById("themeToggle");
+        const html = document.documentElement;
+
+        btn.addEventListener("click", () => {
+            html.classList.toggle("dark");
+            localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
+            btn.textContent = html.classList.contains("dark") ? "🌞" : "🌙";
+        });
+
+        // Mantém o tema escolhido
+        if (localStorage.getItem("theme") === "dark") {
+            html.classList.add("dark");
+            btn.textContent = "🌞";
+        }
+
+        // Ano no rodapé
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
 </body>
 </html>
