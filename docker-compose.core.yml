@@ -62,14 +62,13 @@ services:
             - FORGEJO__registry__STORAGE=local
             - FORGEJO__registry__STORAGE_PATH=/data/registry
             - FORGEJO__registry__HTTP_ADDR=0.0.0.0
-            - FORGEJO__registry__HTTP_PORT=${FORGEJO_SERVICE_REGISTRY_PORT}
+            - FORGEJO__registry__HTTP_PORT=5000
 
             # Avatars
             - FORGEJO__picture__AVATAR_UPLOAD_PATH=/data/gitea/avatars
             - FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH=/data/gitea/repo-avatars
         ports:
             - "${FORGEJO_SSH_PORT}:2222" # SSH access
-            - "${FORGEJO_SERVICE_REGISTRY_PORT}:${FORGEJO_SERVICE_REGISTRY_PORT}"
         volumes:
             - ./core/forgejo/data:/data
         networks:
