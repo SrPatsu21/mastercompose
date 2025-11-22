@@ -27,6 +27,8 @@ services:
       - ENABLE_RCON=TRUE
       - RCON_PASSWORD=${HAVEN_RCON_PASSWORD}
       - RCON_PORT=25575
+    networks:
+      - internal
 
 networks:
     internal:

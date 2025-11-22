@@ -19,6 +19,13 @@ GitLab  Portus  Backrest  ...
 
 ## Network setup
 
+### Permissions
+
+```shell
+sudo chown -R 100000:100000 ./network/nginx
+sudo chown -R 100000:100000 ./network/cloudflared
+```
+
 ### NGINX
 
 ```shell
@@ -41,7 +48,7 @@ sudo chmod +x ./network/nginx/*.sh
 
 ```shell
 sudo mkdir -p ./network/cloudflared
-sudo chmod 777 ./network/cloudflared
+sudo chmod 755 -R ./network/cloudflared
 docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel login
 sudo docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel create my-tunel
 docker exec -it mastercompose-cloudflared cloudflared tunnel route dns my-tunel paulosergio.pierdona.nom.br
@@ -78,6 +85,12 @@ Authorized member on my.zerotier.com/network/<NETWORK_ID>
 you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
 ## Core
+
+### Permissions
+
+```shell
+sudo chown -R 100000:100000 ./core
+```
 
 ### Backrest
 

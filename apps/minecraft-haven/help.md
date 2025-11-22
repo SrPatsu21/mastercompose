@@ -3,3 +3,5 @@ https://help.akliz.net/docs/setup-a-whitelist-for-your-minecraft-server#:~:text=
 docker exec -i mc rcon-cli
 
 https://docker-minecraft-server.readthedocs.io/en/latest/
+
+sudo chown -R 101000:101000 ./apps/minecraft-haven/

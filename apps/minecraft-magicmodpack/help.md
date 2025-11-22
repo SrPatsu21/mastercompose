@@ -12,6 +12,6 @@ cd ./apps/minecraft-magicmodpack/
 java -jar neoforge-21.1.214-installer.jar --installServer
 cd ../..
 
-sudo chown -R 1000:1000 ./apps/minecraft-magicmodpack
+sudo chown -R 101000:101000 ./apps/minecraft-magicmodpack
 sudo chmod -R 775 ./apps/minecraft-magicmodpack
-chmod -R 777 ./apps/minecraft-magicmodpack/config
+sudo chmod -R 777 ./apps/minecraft-magicmodpack/config

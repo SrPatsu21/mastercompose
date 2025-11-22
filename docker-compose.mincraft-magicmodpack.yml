@@ -34,6 +34,8 @@ services:
       - ENABLE_RCON=TRUE
       - RCON_PASSWORD=${MAGICMODPACK_RCON_PORT}
       - RCON_PORT=25575
+    networks:
+      - internal
 
 networks:
   internal:
