@@ -88,8 +88,8 @@ server {
     ssl_dhparam         ${NG_DHPARAMS};
 
     include /etc/letsencrypt/options-ssl-nginx.conf;
-    
-    client_max_body_size 1G;
+
+    client_max_body_size 3G;
 
     # Forgejo UI
     location / {
@@ -122,7 +122,7 @@ server {
 
     include /etc/letsencrypt/options-ssl-nginx.conf;
 
-    client_max_body_size 5G;
+    client_max_body_size 10G;
 
 
     location / {
