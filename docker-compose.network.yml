@@ -1,23 +1,23 @@
 services:
-  nginx-proxy:
-    image: nginx:mainline-alpine-perl
-    container_name: mastercompose-nginx-proxy
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      DB_SQLITE_FILE: "/data/database.sqlite"
-    volumes:
-      - ./network/nginx/data:/data
-      - ./network/nginx/letsencrypt:/etc/letsencrypt
-      - ./network/nginx/custom:/etc/nginx/templates
-      - ./network/nginx/html:/etc/nginx/html
-      - ./network/nginx/ssl:/etc/nginx/ssl
-    networks:
-      - internal
-    ports:
-      - "80:80"
-      - "443:443"
+  # nginx-proxy:
+  #   image: nginx:mainline-alpine-perl
+  #   container_name: mastercompose-nginx-proxy
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     DB_SQLITE_FILE: "/data/database.sqlite"
+  #   volumes:
+  #     - ./network/nginx/data:/data
+  #     - ./network/nginx/letsencrypt:/etc/letsencrypt
+  #     - ./network/nginx/custom:/etc/nginx/templates
+  #     - ./network/nginx/html:/etc/nginx/html
+  #     - ./network/nginx/ssl:/etc/nginx/ssl
+  #   networks:
+  #     - internal
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
 
   #optinal
   zerotier:
@@ -26,27 +26,27 @@ services:
     restart: unless-stopped
     userns_mode: "host"
     cap_add:
-        - NET_ADMIN
+      - NET_ADMIN
     devices:
-        - /dev/net/tun
+      - /dev/net/tun
     environment:
-        ZT_NETWORK: ${ZT_NETWORK}
+      ZT_NETWORK: ${ZT_NETWORK}
     volumes:
-        - ${ZEROTIER_DATA}:/var/lib/zerotier-one
+      - ${ZEROTIER_DATA}:/var/lib/zerotier-one
     network_mode: "host"
 
-  #optinal
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: mastercompose-cloudflared
-    restart: unless-stopped
-    depends_on:
-      - nginx-proxy
-    networks:
-      - internal
-    volumes:
-      - ./network/cloudflared:/etc/cloudflared
-    command: tunnel --config /etc/cloudflared/config.yml run
+  # #optinal
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: mastercompose-cloudflared
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - nginx-proxy
+  #   networks:
+  #     - internal
+  #   volumes:
+  #     - ./network/cloudflared:/etc/cloudflared
+  #   command: tunnel --config /etc/cloudflared/config.yml run
 
 networks:
   internal:

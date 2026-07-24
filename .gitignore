@@ -41,3 +41,6 @@ core/backrest/config/users.yaml
 # Forgejo
 core/forgejo/data
 core/forgejo/postgres
+
+# AI
+aidata
