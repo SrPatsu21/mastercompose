@@ -1,60 +1,23 @@
 # Master Compose
 
-Set up almost everything to devops
-
-| Component     | Purpose                                                    | Notes                                                                                                                         |
-| ------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Forgejo**   | DevOps platform (repositories, CI/CD, user management, UI) | Self‑hosted; runs in Docker; can be accessed via your VPN (ZeroTier) for remote collaborators.                                |
-| **ZeroTier**  | VPN / overlay network                                      | Handles NAT/firewall issues, allows collaborators to access GitLab & Portus without opening ports to the public Internet.     |
-| **Backrest**  | Backup solution with UI                                    | Automates backups of GitLab volumes, Portus volumes, and optionally other data; supports rotation policies (local and cloud). |
-| **nginx**     | Reverse Proxy                                              | Open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols.                                             |
-
-[ZeroTier VPN]
-        |
-[NGINX Proxy Manager (UI + reverse proxy)]
-        |
-+-------+--------+--------+
-|       |        |        |
-GitLab  Portus  Backrest  ...
-
 ## Network setup
 
-### Permissions
+### Nginx TLS
+
+Generate cert
 
 ```shell
-sudo chown -R 100000:100000 ./network/nginx
-sudo chown -R 100000:100000 ./network/cloudflared
+mkdir -p ./network/nginx/ssl
+
+openssl req \
+  -x509 \
+  -nodes \
+  -newkey rsa:2048 \
+  -keyout ./network/nginx/ssl/privkey.pem \
+  -out ./network/nginx/ssl/fullchain.pem \
+  -days 365 \
+  -subj "/CN=mastercompose.com"
 ```
-
-### NGINX
-
-```shell
-sudo chmod +x ./network/nginx/*.sh
-```
-
-#### generate cert for ssl
-
-```shell
-./network/nginx/ssl-dhparams.pem.sh
-```
-
-#### generate cert for containers
-
-```shell
-./network/nginx/generate-dummy-certs.sh
-```
-
-### Cloudflare login
-
-```shell
-sudo mkdir -p ./network/cloudflared
-sudo chmod 755 -R ./network/cloudflared
-docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel login
-sudo docker run -it --rm -v ./network/cloudflared:/home/nonroot/.cloudflared cloudflare/cloudflared:latest tunnel create my-tunel
-docker exec -it mastercompose-cloudflared cloudflared tunnel route dns my-tunel paulosergio.pierdona.nom.br
-```
-
-no A, AAAA if u use tunel
 
 ### Zerotier
 

@@ -1,46 +1,85 @@
-# env
+# =============================================
+# Environment
+# =============================================
+
 .env
+.env.*
+!.env.example
 
-# No cert, key or pass
+
+# =============================================
+# Secrets
+# =============================================
+
+secrets/*
+!secrets/.gitkeep
+
+
+# =============================================
+# TLS / Certificates
+# =============================================
+
 *.pem
-*.secret
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
 
-# ZeroTier sensitive secrets
-/network/zerotier/authtoken.secret
-/network/zerotier/identity.secret
-/network/zerotier/metricstoken.secret
-/network/zerotier/networks.d
 
-# Runtime files (not needed in git)
-/network/zerotier/zerotier-one.pid
-/network/zerotier/zerotier-one.port
-/network/zerotier/peers.d
-/network/zerotier/planet
-/network/zerotier/metrics.prom
-network/zerotier/controller.d/
+# =============================================
+# ZeroTier
+# =============================================
 
-# Let's Encrypt auto-generated certs (optional, can regenerate)
-/network/nginx/letsencrypt/live/
-/network/nginx/letsencrypt/archive/
-/network/nginx/letsencrypt/renewal/
+network/zerotier/data/
 
-# Docker data (optional, often rebuilt)
-/network/nginx/data/*
-!/network/nginx/data/.gitkeep  # keep empty folder if needed
 
+# =============================================
+# Application data
+# =============================================
+
+portainer/data/
+apps/*/data/
+apps/*/db/
+apps/*/config/
+apps/*/cache/
+apps/*/tmp/
+
+
+# =============================================
+# Nginx runtime data
+# =============================================
+
+network/nginx/data/
+network/nginx/letsencrypt/
+network/nginx/ssl/
+
+
+# =============================================
+# Backups
+# =============================================
+
+backups/
+*.bak
+*.backup
+
+
+# =============================================
 # Logs
+# =============================================
+
 *.log
-*.out
+logs/
 
-# Cloudflare
-network/cloudflared/*.json
 
-# backrest
-core/backrest/config/users.yaml
+# =============================================
+# OS / Editor
+# =============================================
 
-# Forgejo
-core/forgejo/data
-core/forgejo/postgres
+.DS_Store
+Thumbs.db
 
-# AI
-aidata
+.idea/
+.vscode/
+*.swp
+*.swo

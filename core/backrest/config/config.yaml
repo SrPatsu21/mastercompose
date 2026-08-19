@@ -1,8 +1,0 @@
-repositories:
-  - name: s3repo
-    type: s3
-    bucket: ${BACKREST_S3_BUCKET}
-    endpoint: ${BACKREST_S3_ENDPOINT}
-    region: ${BACKREST_S3_REGION}
-    accessKeyID: ${BACKREST_S3_KEY}
-    secretAccessKey: ${BACKREST_S3_SECRET}
