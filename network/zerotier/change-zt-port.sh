@@ -14,5 +14,5 @@ if [ ! -d "$(dirname "$PORT_FILE")" ]; then
 fi
 
 # Write the port
-echo -n "{ \"settings\": { \"primaryPort\": ${ZT_PORT:-30000} } }" > ./network/zerotier/local.conf
+echo -n "{ \"settings\": { \"primaryPort\": ${ZT_PORT:-30000} } }" > ./network/zerotier/data/local.conf
 echo "ZeroTier port set to ${ZT_PORT:-30000}"
