@@ -1,5 +1,9 @@
 services:
 
+  # =============================================
+  # Forgejo
+  # =============================================
+
   forgejo:
     image: codeberg.org/forgejo/forgejo:16.0.2
     container_name: mastercompose-forgejo
@@ -9,21 +13,30 @@ services:
       forgejo_db:
         condition: service_healthy
 
-    env_file:
-      - .env
-
     environment:
       USER_UID: "1000"
       USER_GID: "1000"
 
+      # -----------------------------------------
+      # Storage
+      # -----------------------------------------
+
       FORGEJO__storage__STORAGE_TYPE: local
       FORGEJO__storage__PATH: /data
+
+      # -----------------------------------------
+      # Database
+      # -----------------------------------------
 
       FORGEJO__database__DB_TYPE: postgres
       FORGEJO__database__HOST: ${FORGEJO_DB_HOST}:${FORGEJO_DB_PORT}
       FORGEJO__database__NAME: ${FORGEJO_DB_NAME}
       FORGEJO__database__USER: forgejo
       FORGEJO__database__PASSWD_URI: file:/run/secrets/forgejo_db_password
+
+      # -----------------------------------------
+      # Server
+      # -----------------------------------------
 
       FORGEJO__server__DOMAIN: ${FORGEJO_SERVER_DOMAIN}
       FORGEJO__server__ROOT_URL: ${FORGEJO_SERVER_ROOT_URL}
@@ -34,10 +47,22 @@ services:
       FORGEJO__server__SSH_PORT: "2222"
       FORGEJO__server__SSH_LISTEN_PORT: "2222"
 
+      # -----------------------------------------
+      # Security
+      # -----------------------------------------
+
       FORGEJO__security__INSTALL_LOCK: "true"
+
+      # -----------------------------------------
+      # User registration
+      # -----------------------------------------
 
       FORGEJO__service__DISABLE_REGISTRATION: "true"
       FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+
+      # -----------------------------------------
+      # Mail
+      # -----------------------------------------
 
       FORGEJO__mailer__ENABLED: "true"
       FORGEJO__mailer__FROM: "Forgejo<noreply@mastercompose.com>"
@@ -50,8 +75,16 @@ services:
       FORGEJO__service__ENABLE_NOTIFY_MAIL: ${FORGEJO_SERVICE_ENABLE_NOTIFY_MAIL}
       FORGEJO__service__REGISTER_EMAIL_CONFIRM: ${FORGEJO_SERVICE_REGISTER_EMAIL_CONFIRM}
 
+      # -----------------------------------------
+      # LFS
+      # -----------------------------------------
+
       FORGEJO__server__LFS_START_SERVER: "true"
       FORGEJO__lfs__PATH: /data/git/lfs
+
+      # -----------------------------------------
+      # Container Registry
+      # -----------------------------------------
 
       FORGEJO__registry__ENABLED: "true"
       FORGEJO__registry__STORAGE: local
@@ -62,7 +95,7 @@ services:
       - forgejo_mailer_password
 
     volumes:
-      - ./apps/forgejo/data:/data
+      - ./forgejo/data:/data
       - /etc/localtime:/etc/localtime:ro
 
     networks:
@@ -70,13 +103,14 @@ services:
         ipv4_address: ${FORGEJO_IP}
 
 
+  # =============================================
+  # Forgejo PostgreSQL
+  # =============================================
+
   forgejo_db:
     image: postgres:17-alpine
     container_name: mastercompose-forgejo-db
     restart: unless-stopped
-
-    env_file:
-      - .env
 
     environment:
       POSTGRES_DB: ${FORGEJO_DB_NAME}
@@ -87,7 +121,7 @@ services:
       - forgejo_db_password
 
     volumes:
-      - ./apps/forgejo/db:/var/lib/postgresql/data
+      - ./forgejo/db:/var/lib/postgresql/data
 
     healthcheck:
       test:
@@ -105,6 +139,10 @@ services:
         ipv4_address: ${FORGEJO_DB_IP}
 
 
+# =============================================
+# Networks
+# =============================================
+
 networks:
 
   internal:
@@ -112,10 +150,14 @@ networks:
     name: mastercompose_internal
 
 
+# =============================================
+# Secrets
+# =============================================
+
 secrets:
 
   forgejo_db_password:
-    file: ./secrets/forgejo_db_password.txt
+    file: ./../secrets/forgejo_db_password.txt
 
   forgejo_mailer_password:
-    file: ./secrets/forgejo_mailer_password.txt
+    file: ./../secrets/forgejo_mailer_password.txt

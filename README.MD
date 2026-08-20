@@ -1,5 +1,21 @@
 # Master Compose
 
+1. create and adjust .env
+
+2. Set secrets
+
+```shell
+mkdir -p secrets
+
+touch \
+  secrets/backrest_password.txt \
+  secrets/backrest_s3_key.txt \
+  secrets/backrest_s3_secret.txt \
+  secrets/backrest_username.txt \
+  secrets/forgejo_db_password.txt \
+  secrets/forgejo_mailer_password.txt
+```
+
 ## Network setup
 
 ### Nginx TLS
@@ -49,38 +65,15 @@ you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
 ## Core
 
-### Permissions
+### Forgejo
+
+#### Start
 
 ```shell
-sudo chown -R 100000:100000 ./core
+docker compose --env-file .env -f apps/docker-compose.forgejo.yml up -d
 ```
 
-### Backrest
-
-#### set users
-
-```shell
-sudo chmod +x ./core/backrest/config/make_users.sh
-sudo ./core/backrest/config/make_users.sh
-```
-
-### Forgejo folders
-"
-mkdir -p core/forgejo/data/registry
-mkdir -p core/forgejo/data/git/lfs
-mkdir -p core/forgejo/data/gitea/avatars
-mkdir -p core/forgejo/data/gitea/repo-avatars
-
-sudo chown -R 1000:1000 core/forgejo/data
-"
-
-### start core
-
-```shell
-docker compose -f docker-compose.core.yml up -d
-```
-
-### Forgejo user
+#### Forgejo user
 
 ```shell
 docker exec -u 1000 -it mastercompose-forgejo /usr/local/bin/gitea admin user create \
