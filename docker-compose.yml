@@ -1,9 +1,5 @@
 services:
 
-  # =============================================
-  # Nginx
-  # =============================================
-
   nginx:
     image: nginx:mainline-alpine-perl
     container_name: mastercompose-nginx
@@ -24,18 +20,18 @@ services:
       - "443:443"
 
     networks:
-      - proxy
-      - internal
+      proxy:
+      internal:
+        ipv4_address: ${NGINX_IP}
 
-
-  # =============================================
-  # ZeroTier
-  # =============================================
 
   zerotier:
     image: zerotier/zerotier:1.14.2
     container_name: mastercompose-zerotier
     restart: unless-stopped
+
+    env_file:
+      - .env
 
     userns_mode: "host"
 
@@ -54,10 +50,6 @@ services:
     network_mode: host
 
 
-  # =============================================
-  # Portainer
-  # =============================================
-
   portainer:
     image: portainer/portainer-ce:latest
     container_name: mastercompose-portainer
@@ -68,150 +60,9 @@ services:
       - ./portainer/data:/data
 
     networks:
-      - internal
+      internal:
+          ipv4_address: ${PORTAINER_ID}
 
-
-  # =============================================
-  # Forgejo
-  # =============================================
-
-  forgejo:
-    image: codeberg.org/forgejo/forgejo:16.0.2
-    container_name: mastercompose-forgejo
-    restart: unless-stopped
-
-    depends_on:
-      forgejo_db:
-        condition: service_healthy
-
-    environment:
-      USER_UID: "1000"
-      USER_GID: "1000"
-
-      # -----------------------------------------
-      # Storage
-      # -----------------------------------------
-
-      FORGEJO__storage__STORAGE_TYPE: local
-      FORGEJO__storage__PATH: /data
-
-      # -----------------------------------------
-      # Database
-      # -----------------------------------------
-
-      FORGEJO__database__DB_TYPE: postgres
-      FORGEJO__database__HOST: ${FORGEJO_DB_HOST}:${FORGEJO_DB_PORT}
-      FORGEJO__database__NAME: ${FORGEJO_DB_NAME}
-      FORGEJO__database__USER: forgejo
-      FORGEJO__database__PASSWD_URI: file:/run/secrets/forgejo_db_password
-
-      # -----------------------------------------
-      # Server
-      # -----------------------------------------
-
-      FORGEJO__server__DOMAIN: ${FORGEJO_SERVER_DOMAIN}
-      FORGEJO__server__ROOT_URL: ${FORGEJO_SERVER_ROOT_URL}
-
-      FORGEJO__server__HTTP_PORT: ${FORGEJO_HTTP_PORT}
-
-      FORGEJO__server__SSH_DOMAIN: ${FORGEJO_SERVER_DOMAIN}
-      FORGEJO__server__START_SSH_SERVER: "true"
-      FORGEJO__server__SSH_PORT: "2222"
-      FORGEJO__server__SSH_LISTEN_PORT: "2222"
-
-      # -----------------------------------------
-      # Security
-      # -----------------------------------------
-
-      FORGEJO__security__INSTALL_LOCK: "true"
-
-      # -----------------------------------------
-      # User registration
-      # -----------------------------------------
-
-      FORGEJO__service__DISABLE_REGISTRATION: "true"
-      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
-
-      # -----------------------------------------
-      # Mail
-      # -----------------------------------------
-
-      FORGEJO__mailer__ENABLED: "true"
-      FORGEJO__mailer__FROM: "Forgejo<noreply@mastercompose.com>"
-      FORGEJO__mailer__USER: ${FORGEJO_MAILER_USER}
-      FORGEJO__mailer__PASSWD_URI: file:/run/secrets/forgejo_mailer_password
-      FORGEJO__mailer__PROTOCOL: smtps
-      FORGEJO__mailer__SMTP_ADDR: smtp.gmail.com
-      FORGEJO__mailer__SMTP_PORT: "465"
-
-      FORGEJO__service__ENABLE_NOTIFY_MAIL: ${FORGEJO_SERVICE_ENABLE_NOTIFY_MAIL}
-      FORGEJO__service__REGISTER_EMAIL_CONFIRM: ${FORGEJO_SERVICE_REGISTER_EMAIL_CONFIRM}
-
-      # -----------------------------------------
-      # LFS
-      # -----------------------------------------
-
-      FORGEJO__server__LFS_START_SERVER: "true"
-      FORGEJO__lfs__PATH: /data/git/lfs
-
-      # -----------------------------------------
-      # Container Registry
-      # -----------------------------------------
-
-      FORGEJO__registry__ENABLED: "true"
-      FORGEJO__registry__STORAGE: local
-      FORGEJO__registry__STORAGE_PATH: /data/registry
-
-    secrets:
-      - forgejo_db_password
-      - forgejo_mailer_password
-
-    volumes:
-      - ./apps/forgejo/data:/data
-      - /etc/localtime:/etc/localtime:ro
-
-    networks:
-      - internal
-
-
-  # =============================================
-  # Forgejo PostgreSQL
-  # =============================================
-
-  forgejo_db:
-    image: postgres:17-alpine
-    container_name: mastercompose-forgejo-db
-    restart: unless-stopped
-
-    environment:
-      POSTGRES_DB: ${FORGEJO_DB_NAME}
-      POSTGRES_USER: forgejo
-      POSTGRES_PASSWORD_FILE: /run/secrets/forgejo_db_password
-
-    secrets:
-      - forgejo_db_password
-
-    volumes:
-      - ./apps/forgejo/db:/var/lib/postgresql/data
-
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U forgejo -d ${FORGEJO_DB_NAME}"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-
-    networks:
-      - internal
-
-
-# =============================================
-# Networks
-# =============================================
 
 networks:
 
@@ -222,16 +73,6 @@ networks:
   internal:
     name: mastercompose_internal
     driver: bridge
-
-
-# =============================================
-# Secrets
-# =============================================
-
-secrets:
-
-  forgejo_db_password:
-    file: ./secrets/forgejo_db_password.txt
-
-  forgejo_mailer_password:
-    file: ./secrets/forgejo_mailer_password.txt
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
