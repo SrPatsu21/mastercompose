@@ -16,11 +16,15 @@ touch \
   secrets/forgejo_mailer_password.txt
 ```
 
+```shell
+chmod 600 secrets/*.txt
+```
+
 ## Network setup
 
 ### Nginx TLS
 
-Generate cert
+### Generate cert
 
 ```shell
 mkdir -p ./network/nginx/ssl
@@ -32,7 +36,17 @@ openssl req \
   -keyout ./network/nginx/ssl/privkey.pem \
   -out ./network/nginx/ssl/fullchain.pem \
   -days 365 \
-  -subj "/CN=mastercompose.com"
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:10.147.18.1,IP:192.168.80.105"
+```
+
+Obs: change for your IPs
+
+#### Update your certs
+
+```shell
+sudo cp ./network/nginx/ssl/fullchain.pem /etc/ca-certificates/trust-source/anchors/forgejo-local.crt
+sudo update-ca-trust
 ```
 
 ### Zerotier
@@ -82,4 +96,13 @@ docker exec -u 1000 -it mastercompose-forgejo /usr/local/bin/gitea admin user cr
   --email paulosergiopierdona@gmail.com \
   --admin \
   --must-change-password=true
+```
+
+#### ssh key
+
+```shell
+ssh-keygen -t ed25519 -C "forgejo" -f ~/.ssh/forgejo_ed25519
+eval "$(ssh-agent -s)"
+ssh-add -l
+cat ~/.ssh/forgejo_ed25519.pub
 ```

@@ -44,7 +44,7 @@ services:
 
       FORGEJO__server__SSH_DOMAIN: ${FORGEJO_SERVER_DOMAIN}
       FORGEJO__server__START_SSH_SERVER: "true"
-      FORGEJO__server__SSH_PORT: "2222"
+      FORGEJO__server__SSH_PORT: ${FORGEJO_SSH_PORT}
       FORGEJO__server__SSH_LISTEN_PORT: "2222"
 
       # -----------------------------------------
@@ -97,7 +97,8 @@ services:
     volumes:
       - ./forgejo/data:/data
       - /etc/localtime:/etc/localtime:ro
-
+    ports:
+        - "${FORGEJO_SSH_PORT}:2222" # SSH access
     networks:
       internal:
         ipv4_address: ${FORGEJO_IP}
