@@ -1,0 +1,43 @@
+services:
+
+  # =============================================
+  # Jellyfin
+  # =============================================
+
+  jellyfin:
+    image: ${JELLYFIN_IMAGE}
+    container_name: mastercompose-jellyfin
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    user: "${JELLYFIN_UID}:${JELLYFIN_GID}"
+
+    environment:
+      JELLYFIN_PublishedServerUrl: ${JELLYFIN_PUBLISHED_SERVER_URL}
+
+    ports:
+      - "${JELLYFIN_HTTP_PORT}:8096/tcp"
+      - "${JELLYFIN_DISCOVERY_PORT}:7359/udp"
+
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+
+      - ${JELLYFIN_MEDIA_PATH}:/media:ro
+
+    networks:
+      internal:
+        ipv4_address: ${JELLYFIN_IP}
+
+
+# =============================================
+# Networks
+# =============================================
+
+networks:
+
+  internal:
+    external: true
+    name: mastercompose_internal

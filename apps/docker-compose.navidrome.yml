@@ -1,0 +1,42 @@
+services:
+
+  # =============================================
+  # Navidrome
+  # =============================================
+
+  navidrome:
+    image: ${NAVIDROME_IMAGE}
+    container_name: mastercompose-navidrome
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    user: "${NAVIDROME_UID}:${NAVIDROME_GID}"
+
+    environment:
+      ND_LOGLEVEL: ${NAVIDROME_LOG_LEVEL}
+      ND_MUSICFOLDER: /music
+      ND_BASEURL: ${NAVIDROME_BASE_URL}
+
+    volumes:
+      - ./navidrome/data:/data
+      - ${NAVIDROME_MUSIC_FOLDER}:/media/music:ro
+
+    ports:
+      - "${NAVIDROME_HTTP_PORT}:4533"
+
+    networks:
+      internal:
+        ipv4_address: ${NAVIDROME_IP}
+
+
+# =============================================
+# Networks
+# =============================================
+
+networks:
+
+  internal:
+    external: true
+    name: mastercompose_internal

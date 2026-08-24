@@ -77,7 +77,7 @@ Authorized member on my.zerotier.com/network/<NETWORK_ID>
 
 you need to config the **ZT_ADDRS** on `.env` otherwize it won´t work
 
-## Core
+## Apps
 
 ### Forgejo
 
@@ -105,4 +105,26 @@ ssh-keygen -t ed25519 -C "forgejo" -f ~/.ssh/forgejo_ed25519
 eval "$(ssh-agent -s)"
 ssh-add -l
 cat ~/.ssh/forgejo_ed25519.pub
+```
+
+### Navidrome
+
+```shell
+docker compose -f apps/docker-compose.navidrome.yml up -d
+```
+
+```shell
+mkdir -p apps/navidrome/data
+sudo chown -R 1000:1000 apps/navidrome/
+```
+
+### Jellyfin
+
+```shell
+docker compose -f apps/docker-compose.jellyfin.yml up -d
+```
+
+```shell
+mkdir -p apps/jellyfin/
+sudo chown -R 1000:1000 apps/jellyfin/
 ```

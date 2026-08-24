@@ -9,6 +9,9 @@ services:
     container_name: mastercompose-forgejo
     restart: unless-stopped
 
+    env_file:
+      - .env
+
     depends_on:
       forgejo_db:
         condition: service_healthy

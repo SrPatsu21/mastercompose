@@ -37,9 +37,9 @@ server {
     # Forgejo
     # =========================================
 
-    location /forgejo/ {
+    location /git/ {
 
-        proxy_pass http://${FORGEJO_HOST}:${FORGEJO_HTTP_PORT}/;
+        proxy_pass http://${FORGEJO_IP}:${FORGEJO_HTTP_PORT}/;
 
         proxy_http_version 1.1;
 
@@ -61,11 +61,16 @@ server {
         proxy_buffering off;
     }
 
+
+    # =========================================
+    # Forgejo Container Registry
+    # =========================================
+
     location /v2/ {
 
         client_max_body_size 0;
 
-        proxy_pass http://${FORGEJO_HOST}:${FORGEJO_HTTP_PORT}/v2/;
+        proxy_pass http://${FORGEJO_IP}:${FORGEJO_HTTP_PORT}/v2/;
 
         proxy_http_version 1.1;
 
@@ -83,11 +88,16 @@ server {
         proxy_buffering off;
     }
 
+
+    # =========================================
+    # Forgejo Registry Token
+    # =========================================
+
     location /v2/token {
 
         client_max_body_size 0;
 
-        proxy_pass http://${FORGEJO_HOST}:${FORGEJO_HTTP_PORT}/v2/token;
+        proxy_pass http://${FORGEJO_IP}:${FORGEJO_HTTP_PORT}/v2/token;
 
         proxy_http_version 1.1;
 
@@ -101,6 +111,92 @@ server {
         proxy_buffering off;
     }
 
+
+    # =========================================
+    # Backrest
+    # =========================================
+
+    location /backrest/ {
+
+        proxy_pass http://${BACKREST_IP}:${BACKREST_PORT}/;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Prefix /backrest;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+
+        proxy_buffering off;
+    }
+
+
+    # =========================================
+    # Navidrome
+    # =========================================
+
+    location /navidrome/ {
+
+        proxy_pass http://${NAVIDROME_IP}:${NAVIDROME_HTTP_PORT}/;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Prefix /navidrome;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+
+        proxy_buffering off;
+    }
+
+
+    # =========================================
+    # Jellyfin
+    # =========================================
+
+    location /jellyfin/ {
+
+        proxy_pass http://${JELLYFIN_IP}:${JELLYFIN_HTTP_PORT}/;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Prefix /jellyfin;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+
+        proxy_buffering off;
+    }
 
 
     # =========================================
