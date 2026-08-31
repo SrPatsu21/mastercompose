@@ -59,6 +59,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer/data:/data
 
+    ports:
+      - "${PORTAINER_PORT}:${PORTAINER_PORT}"
     networks:
       internal:
           ipv4_address: ${PORTAINER_ID}
