@@ -107,17 +107,6 @@ ssh-add -l
 cat ~/.ssh/forgejo_ed25519.pub
 ```
 
-### Navidrome
-
-```shell
-docker compose -f apps/docker-compose.navidrome.yml up -d
-```
-
-```shell
-mkdir -p apps/navidrome/data
-sudo chown -R 1000:1000 apps/navidrome/
-```
-
 ### Jellyfin
 
 ```shell
