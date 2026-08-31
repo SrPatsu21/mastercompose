@@ -37,7 +37,7 @@ server {
     # Forgejo
     # =========================================
 
-    location /git/ {
+    location /forgejo/ {
 
         proxy_pass http://${FORGEJO_IP}:${FORGEJO_HTTP_PORT}/;
 
