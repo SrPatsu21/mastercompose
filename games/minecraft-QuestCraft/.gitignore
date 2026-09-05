@@ -1,0 +1,6 @@
+world/**
+.zip
+data
+plugins/**
+ops.json
+whitelist.json

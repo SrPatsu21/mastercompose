@@ -1,0 +1,40 @@
+services:
+  minecraft-QuestCraft:
+    tty: true
+    stdin_open: true
+    image: itzg/minecraft-server
+    container_name: mastercompose-minecraft-QuestCraft
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./minecraft-QuestCraft/world/:/data/world
+      - ./minecraft-QuestCraft/whitelist.json:/data/whitelist.json
+      - ./minecraft-QuestCraft/plugins/:/plugins
+      - ./minecraft-QuestCraft/ops.json:/data/ops.json
+    ports:
+      - "${QUEST_CRAFT_MINECRAFT_PORT}:25565"
+      - "${QUEST_CRAFT_MINECRAFT_RCON_PORT}:25575"
+    environment:
+      - EULA=TRUE
+      - AUTO_UPDATE=false
+
+      - VERSION=26.2
+
+      - TYPE=paper
+
+      - INIT_MEMORY=2G
+      - MAX_MEMORY=4G
+
+      - ONLINE_MODE=FALSE
+      - DIFFICULTY=hard
+      - MAX_PLAYERS=10
+      - VIEW_DISTANCE=16
+      - MODE=survival
+      - SERVER_NAME=QuestCraft
+
+      - ENABLE_WHITELIST=FALSE
+      - ALLOW_FLIGHT=TRUE
+      - ENABLE_RCON=TRUE
+      - RCON_PASSWORD=${QUEST_CRAFT_MINECRAFT_RCON_PASSWORD}
+      - RCON_PORT=25575
