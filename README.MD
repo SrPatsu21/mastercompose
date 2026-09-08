@@ -8,10 +8,6 @@
 mkdir -p secrets
 
 touch \
-  secrets/backrest_password.txt \
-  secrets/backrest_s3_key.txt \
-  secrets/backrest_s3_secret.txt \
-  secrets/backrest_username.txt \
   secrets/forgejo_db_password.txt \
   secrets/forgejo_mailer_password.txt
 ```
