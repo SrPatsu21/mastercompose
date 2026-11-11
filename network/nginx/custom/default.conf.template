@@ -167,6 +167,10 @@ server {
         proxy_buffering off;
     }
 
+    # =========================================
+    # AI Gateway
+    # =========================================
+
     location /ai-api/ {
         proxy_pass http://${AI_IP}:30020/;
 
@@ -184,27 +188,6 @@ server {
         proxy_send_timeout 3600s;
     }
 
-
-    #location /ai/ {
-    #    proxy_pass http://${AI_WEBUI_IP}:8080/;
-
-    #    proxy_http_version 1.1;
-
-    #    proxy_set_header Host $host;
-    #    proxy_set_header X-Real-IP $remote_addr;
-    #    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    #    proxy_set_header X-Forwarded-Proto $scheme;
-
-    #    proxy_set_header Upgrade $http_upgrade;
-    #    proxy_set_header Connection "upgrade";
-
-    #    proxy_buffering off;
-    #    proxy_request_buffering off;
-
-    #    proxy_read_timeout 3600s;
-    #    proxy_send_timeout 3600s;
-    #}
-
     # =========================================
     # Main page
     # =========================================
@@ -212,5 +195,46 @@ server {
     location / {
 
         try_files $uri $uri/ /index.html;
+    }
+}
+
+
+# =============================================
+# Open WebUI HTTPS
+# =============================================
+
+server {
+
+    listen 8443 ssl;
+    listen [::]:8443 ssl;
+
+    server_name 10.147.18.1;
+
+    ssl_certificate     ${NG_CERT_PATH}fullchain.pem;
+    ssl_certificate_key ${NG_KEY_PATH}privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    location / {
+
+        proxy_pass http://${AI_WEBUI_IP}:8080;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 3600s;
+        proxy_read_timeout 3600s;
+
+        proxy_buffering off;
+        proxy_request_buffering off;
     }
 }

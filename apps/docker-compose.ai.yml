@@ -69,6 +69,7 @@ services:
       ENABLE_OLLAMA_API: "false"
       ENABLE_OPENAI_API: "true"
       OPENAI_API_BASE_URL: http://${AI_IP}:${AI_GATEWAY_PORT}/v1
+      OPENAI_API_KEY: /run/secrets/forgejo_db_password
 
       RAG_EMBEDDING_MODEL: ""
       RAG_EMBEDDING_ENGINE: "ollama"
