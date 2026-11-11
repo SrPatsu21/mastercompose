@@ -14,6 +14,10 @@ touch \
 ```
 
 ```shell
+openssl rand -hex 32 | sed 's/^/sk-/' > secrets/ai_gateway_key.txt
+```
+
+```shell
 chmod 600 secrets/*.txt
 ```
 
