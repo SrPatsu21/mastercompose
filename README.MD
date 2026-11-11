@@ -9,7 +9,8 @@ mkdir -p secrets
 
 touch \
   secrets/forgejo_db_password.txt \
-  secrets/forgejo_mailer_password.txt
+  secrets/forgejo_mailer_password.txt \
+  secrets/ai_gateway_key.txt
 ```
 
 ```shell
@@ -60,7 +61,7 @@ sudo chmod +x ./network/zerotier/change-zt-port.sh
 ### RUN Network
 
 ```shell
-docker compose -f docker-compose.network.yml up -d
+docker compose up -d
 ```
 
 ### Zerotier Network ID
@@ -112,4 +113,30 @@ docker compose -f apps/docker-compose.jellyfin.yml up -d
 ```shell
 mkdir -p apps/jellyfin/
 sudo chown -R 1000:1000 apps/jellyfin/
+```
+
+### AI
+
+#### Start
+
+```shell
+docker compose -f apps/docker-compose.ai.yml up -d
+```
+
+#### Check
+
+```shell
+docker compose -f apps/docker-compose.ai.yml ps
+```
+
+#### Ollama
+
+```shell
+docker exec -it mastercompose-ollama ollama --version
+
+docker exec -it mastercompose-ollama ollama pull glm4
+
+docker exec -it mastercompose-ollama ollama list
+
+docker exec -it mastercompose-ollama ollama run glm4
 ```

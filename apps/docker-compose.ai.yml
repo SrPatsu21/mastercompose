@@ -1,51 +1,108 @@
 services:
+
+  # =============================================
+  # Ollama
+  # =============================================
+
   ollama:
     image: ollama/ollama:latest
     container_name: mastercompose-ollama
-    restart: on-failure:5
-
-    ports:
-      - "11434:11434"
-
-    volumes:
-      - ./aidata/ollama:/root/.ollama
+    restart: unless-stopped
 
     environment:
-      - OLLAMA_KEEP_ALIVE=24h
+      OLLAMA_HOST: 0.0.0.0:11434
+
+    volumes:
+      - ./ai/ollama:/root/.ollama
 
     networks:
-      - ai
+      internal:
+        ipv4_address: ${OLLAMA_IP}
 
-    # for NVIDIA
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
 
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: mastercompose-open-webui
-    restart: on-failure:5
+  # =============================================
+  # AI Gateway
+  # =============================================
+
+  ai-gateway:
+    image: docker.litellm.ai/berriai/litellm:latest
+    container_name: mastercompose-ai-gateway
+    restart: unless-stopped
+
+    env_file:
+      - ../.env
+
+    command:
+      - "--config"
+      - "/app/config.yaml"
+      - "--port"
+      - "${AI_GATEWAY_PORT}"
+
+    secrets:
+      - ai_gateway_key
+
+    volumes:
+      - ./ai/gateway/config.yaml:/app/config.yaml:ro
 
     depends_on:
       - ollama
 
-    ports:
-      - "45050:8080"
+    networks:
+      internal:
+        ipv4_address: ${AI_IP}
+
+
+  # =============================================
+  # Open WebUI
+  # =============================================
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: mastercompose-open-webui
+    restart: unless-stopped
+
+    env_file:
+      - ../.env
 
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
+      WEBUI_URL: ${AI_WEBUI_URL}
+      ENABLE_OLLAMA_API: "false"
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_BASE_URL: http://${AI_IP}:${AI_GATEWAY_PORT}/v1
+
+      RAG_EMBEDDING_MODEL: ""
+      RAG_EMBEDDING_ENGINE: "ollama"
+
+    secrets:
+      - ai_gateway_key
 
     volumes:
-      - ./aidata/open-webui:/app/backend/data
+      - ./ai/open-webui:/app/backend/data
+
+    depends_on:
+      - ai-gateway
 
     networks:
-      - ai
+      internal:
+        ipv4_address: ${AI_WEBUI_IP}
+
+
+# =============================================
+# Networks
+# =============================================
 
 networks:
-  ai:
-    driver: bridge
 
+  internal:
+    external: true
+    name: mastercompose_internal
+
+
+# =============================================
+# Secrets
+# =============================================
+
+secrets:
+
+  ai_gateway_key:
+    file: ./../secrets/ai_gateway_key.txt

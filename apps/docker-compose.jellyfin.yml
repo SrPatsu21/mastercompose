@@ -25,7 +25,7 @@ services:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
 
-      - ${JELLYFIN_MEDIA_PATH}:/media:ro
+      - ${JELLYFIN_MEDIA_PATH}:/media
 
     networks:
       internal:
