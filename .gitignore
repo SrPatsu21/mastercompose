@@ -44,8 +44,8 @@ apps/*/db/
 apps/*/config/
 apps/*/cache/
 apps/*/tmp/
-apps/ollama/
-apps/open-webui/
+apps/ai/ollama/
+apps/ai/open-webui/
 
 
 # =============================================
