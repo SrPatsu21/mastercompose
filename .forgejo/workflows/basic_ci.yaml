@@ -13,11 +13,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          github-server-url: https://10.147.18.1/forgejo
-        env:
-          GIT_SSL_NO_VERIFY: "true"
+        run: |
+          git init .
+          git remote add origin "https://10.147.18.1/forgejo/${GITHUB_REPOSITORY}.git"
+
+          AUTH_HEADER="$(printf '%s:%s' "$GITHUB_ACTOR" "$FORGEJO_TOKEN" | base64 | tr -d '\n')"
+
+          git -c http.sslVerify=false \
+            -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" \
+            fetch --no-tags --depth=1 origin "$GITHUB_SHA"
+
+          git checkout --detach FETCH_HEAD
 
       - name: Install dependencies
         run: |
