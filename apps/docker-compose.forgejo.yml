@@ -143,6 +143,78 @@ services:
         ipv4_address: ${FORGEJO_DB_IP}
 
 
+  # =============================================
+  # Forgejo Runner Docker-in-Docker
+  # =============================================
+
+  forgejo_runner_dind:
+    image: docker:27-dind
+    container_name: mastercompose-forgejo-runner-dind
+    restart: unless-stopped
+
+    privileged: true
+
+    command:
+      - dockerd
+      - -H
+      - tcp://0.0.0.0:2375
+      - --tls=false
+
+    volumes:
+      - ./forgejo/runner/docker:/var/lib/docker
+
+    networks:
+      - runner_backend
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "docker",
+          "-H",
+          "tcp://127.0.0.1:2375",
+          "info"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+
+  # =============================================
+  # Forgejo Runner
+  # =============================================
+
+  forgejo_runner:
+    image: data.forgejo.org/forgejo/runner:13
+    container_name: mastercompose-forgejo-runner
+    restart: unless-stopped
+
+    user: "1000:1000"
+
+    depends_on:
+      forgejo_runner_dind:
+        condition: service_healthy
+
+    environment:
+      DOCKER_HOST: tcp://forgejo_runner_dind:2375
+
+    volumes:
+      - ./forgejo/runner/data:/data
+
+    working_dir: /data
+
+    command:
+      - forgejo-runner
+      - daemon
+      - -c
+      - /data/config.yml
+
+    networks:
+      internal:
+        ipv4_address: ${FORGEJO_RUNNER_IP}
+      runner_backend:
+
 # =============================================
 # Networks
 # =============================================
@@ -152,6 +224,9 @@ networks:
   internal:
     external: true
     name: mastercompose_internal
+
+  runner_backend:
+    driver: bridge
 
 
 # =============================================

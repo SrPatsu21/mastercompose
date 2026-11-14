@@ -46,7 +46,11 @@ apps/*/cache/
 apps/*/tmp/
 apps/ai/ollama/
 apps/ai/open-webui/
-
+apps/ai/searxng
+apps/forgejo/runner/.cache
+apps/forgejo/runner/data/*
+!apps/forgejo/runner/data/config.example.yml
+# apps/forgejo/runner
 
 # =============================================
 # Nginx runtime data
