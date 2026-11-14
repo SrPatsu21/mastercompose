@@ -104,15 +104,25 @@ cat ~/.ssh/forgejo_ed25519.pub
 
 #### Runner
 
+Create the Runner directories:
+
 ```shell
 mkdir -p apps/forgejo/runner/data
 mkdir -p apps/forgejo/runner/docker
-sudo chown -R 1000:1000 apps/forgejo/runner/data
 ```
 
-Use `config.example.yml` as an example to create the `config.yml` file for the runner.
+Set the correct ownership and permissions for the Runner data directory.
 
-After configuring the runner, start the services:
+The Runner container runs as UID/GID `1000:1000`, so it needs ownership of the mounted `/data` directory.
+
+```shell
+sudo chown -R 1000:1000 apps/forgejo/runner/data
+sudo chmod -R u+rwX apps/forgejo/runner/data
+```
+
+Use `config.example.yml` as an example to create the `config.yml` file for the Runner.
+
+After configuring the Runner, start the services:
 
 ```shell
 docker compose -f apps/docker-compose.forgejo.yml up -d
