@@ -12,15 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug Forgejo URLs
-        run: |
-          echo "GITHUB_SERVER_URL=$GITHUB_SERVER_URL"
-          echo "FORGEJO_SERVER_URL=$FORGEJO_SERVER_URL"
-          echo "GITHUB_API_URL=$GITHUB_API_URL"
-          echo "FORGEJO_API_URL=$FORGEJO_API_URL"
-
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          github-server-url: https://10.147.18.1/forgejo
         env:
           GIT_SSL_NO_VERIFY: "true"
 
