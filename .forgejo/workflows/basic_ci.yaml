@@ -1,0 +1,160 @@
+
+name: Basic CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate project
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3 \
+            python3-pip \
+            tidy \
+            nginx \
+            gettext-base \
+            openssl
+
+          sudo npm install -g markdownlint-cli2
+
+      # -----------------------------------------
+      # YAML
+      # -----------------------------------------
+
+      - name: Validate YAML files
+        run: |
+          python3 -m pip install PyYAML
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import yaml
+          import sys
+
+          files = [
+              *Path(".").rglob("*.yml"),
+              *Path(".").rglob("*.yaml")
+          ]
+
+          files = [
+              f for f in files
+              if ".git" not in f.parts
+              and "node_modules" not in f.parts
+          ]
+
+          errors = []
+
+          for file in files:
+              try:
+                  with file.open() as stream:
+                      list(yaml.safe_load_all(stream))
+                  print(f"OK: {file}")
+              except Exception as error:
+                  errors.append((file, error))
+                  print(f"ERROR: {file}: {error}")
+
+          if errors:
+              sys.exit(1)
+
+          print(f"\nValidated {len(files)} YAML files.")
+          PY
+
+      # -----------------------------------------
+      # HTML
+      # -----------------------------------------
+
+      - name: Validate HTML files
+        run: |
+          mapfile -d '' files < <(
+            find . -type f -iname "*.html" \
+              -not -path "./.git/*" \
+              -not -path "*/node_modules/*" \
+              -print0
+          )
+
+          for file in "${files[@]}"; do
+            echo "Checking $file"
+            tidy -qe "$file"
+          done
+
+          echo "HTML validation completed."
+
+      # -----------------------------------------
+      # Markdown
+      # -----------------------------------------
+
+      - name: Validate Markdown files
+        run: |
+          markdownlint-cli2 \
+            "**/*.md" \
+            "!**/node_modules/**" \
+            "!**/.git/**"
+
+      # -----------------------------------------
+      # Nginx
+      # -----------------------------------------
+
+      - name: Validate Nginx templates
+        run: |
+          mapfile -d '' files < <(
+            find . -type f -name "default.conf.template" \
+              -not -path "./.git/*" \
+              -not -path "*/node_modules/*" \
+              -print0
+          )
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No Nginx templates found."
+            exit 0
+          fi
+
+          mkdir -p /tmp/nginx-ci
+
+          openssl req -x509 -nodes \
+            -newkey rsa:2048 \
+            -keyout /tmp/nginx-ci/ci.key \
+            -out /tmp/nginx-ci/ci.crt \
+            -days 1 \
+            -subj "/CN=localhost"
+
+          for file in "${files[@]}"; do
+            echo "Checking $file"
+
+            while IFS= read -r variable; do
+              export "$variable=ci-placeholder"
+            done < <(
+              grep -oE '\$\{[A-Za-z_][A-Za-z0-9_]*\}' "$file" \
+                | tr -d '${}' \
+                | sort -u
+            )
+
+            envsubst "$(grep -oE '\$\{[A-Za-z_][A-Za-z0-9_]*\}' "$file" | sort -u | tr '\n' ' ')" \
+              < "$file" \
+              > /tmp/nginx-ci/rendered.conf
+
+            sed -i \
+              -e 's|^[[:space:]]*ssl_certificate[[:space:]].*;|    ssl_certificate /tmp/nginx-ci/ci.crt;|' \
+              -e 's|^[[:space:]]*ssl_certificate_key[[:space:]].*;|    ssl_certificate_key /tmp/nginx-ci/ci.key;|' \
+              /tmp/nginx-ci/rendered.conf
+
+            {
+              echo "events {}"
+              echo "http {"
+              cat /tmp/nginx-ci/rendered.conf
+              echo "}"
+            } > /tmp/nginx-ci/nginx.conf
+
+            nginx -t -c /tmp/nginx-ci/nginx.conf
+          done
+
+          echo "Nginx validation completed."
