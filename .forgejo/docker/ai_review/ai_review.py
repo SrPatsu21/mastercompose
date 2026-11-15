@@ -25,6 +25,11 @@ import sys
 import unicodedata
 from urllib.parse import urlsplit
 
+# The suppression on HTTPSConnection below relies on this: modern Python
+# verifies certificates by default, and we also pass an explicit context.
+if sys.version_info < (3, 10):
+    raise SystemExit("Python 3.10 or newer is required")
+
 MAX_CHUNK_CHARS = 6000
 MAX_CHUNKS = 20
 MAX_FINDINGS_PER_CHUNK = 10
@@ -59,20 +64,14 @@ SENSITIVE_PATHS = re.compile(r"(^|/)(\.forgejo|\.github|\.gitea)/workflows/|(^|/
 
 
 def tls_context() -> ssl.SSLContext | None:
-    """TLS settings for self-signed setups.
+    """TLS settings for a self-signed setup.
 
-    REVIEW_CA_FILE: path to a CA/certificate to trust (preferred).
-    REVIEW_INSECURE_TLS=1: skip verification (same trade-off as sslVerify=false).
+    REVIEW_CA_FILE: path to the certificate to trust. Verification is always
+    on; there is deliberately no option to disable it. Without the variable
+    the system trust store is used.
     """
     ca_file = os.environ.get("REVIEW_CA_FILE")
-    if ca_file:
-        return ssl.create_default_context(cafile=ca_file)
-    if os.environ.get("REVIEW_INSECURE_TLS") == "1":
-        context = ssl.create_default_context()
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-        return context
-    return None
+    return ssl.create_default_context(cafile=ca_file) if ca_file else None
 
 
 def https_post_json(url: str, payload: dict, headers: dict, timeout: int) -> dict:
@@ -87,7 +86,9 @@ def https_post_json(url: str, payload: dict, headers: dict, timeout: int) -> dic
     path = parts.path or "/"
     if parts.query:
         path += "?" + parts.query
-    conn = http.client.HTTPSConnection(
+    # Audit-only rule (it warns about Python < 3.4.3 not verifying certificates).
+    # Python >= 3.10 is enforced at import time and the context is explicit.
+    conn = http.client.HTTPSConnection(  # nosemgrep: python.lang.security.audit.httpsconnection-detected.httpsconnection-detected
         parts.hostname, parts.port or 443, timeout=timeout, context=tls_context()
     )
     try:
