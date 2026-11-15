@@ -45,7 +45,7 @@ container:
   workdir_parent:
   valid_volumes: []
   docker_host: tcp://forgejo_runner_dind:2375
-  force_pull: false
+  force_pull: true
   force_rebuild: false
 
 host:

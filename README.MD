@@ -127,6 +127,14 @@ sudo chmod -R u+rwX apps/forgejo/data/packages
 
 Use `config.example.yml` as an example to create the `config.yml` file for the Runner.
 
+Add the Nginx certificate to the Runner environment, in the same file that defines `FORGEJO_TOKEN`. Jobs use it to verify TLS instead of disabling verification:
+
+```shell
+echo "FORGEJO_CA_B64=$(base64 -w0 network/nginx/ssl/fullchain.pem)" >> apps/forgejo/runner/data/.env
+```
+
+Renew this value whenever the certificate is regenerated.
+
 After configuring the Runner, start the services:
 
 ```shell
@@ -143,13 +151,27 @@ mkdir -p .forgejo/workflows
 
 Add your workflow files (`.yml`) inside `.forgejo/workflows/`.
 
+The AI review workflow needs a repository secret named `AI_GATEWAY_KEY`
+(Repository → Settings → Actions → Secrets). Use the value from:
+
+```shell
+cat secrets/ai_gateway_key.txt
+```
+
 ##### Conteiner for Actions
 
-- build
+- Basic CI
 
 ```shell
 docker build --platform linux/amd64 -t 10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04 .forgejo/docker/basic_ci
 docker push 10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04
+```
+
+- AI review image
+
+```shell
+docker build --platform linux/amd64 -t 10.147.18.1/srpatsu21/ai-review-img:ubuntu-24.04 .forgejo/docker/ai_review
+docker push 10.147.18.1/srpatsu21/ai-review-img:ubuntu-24.04
 ```
 
 ### Jellyfin

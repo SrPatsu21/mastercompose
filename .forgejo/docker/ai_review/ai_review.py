@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import http.client
 import json
 import os
 import re
@@ -22,7 +23,7 @@ import ssl
 import subprocess
 import sys
 import unicodedata
-import urllib.request
+from urllib.parse import urlsplit
 
 MAX_CHUNK_CHARS = 6000
 MAX_CHUNKS = 20
@@ -72,6 +73,33 @@ def tls_context() -> ssl.SSLContext | None:
         context.verify_mode = ssl.CERT_NONE
         return context
     return None
+
+
+def https_post_json(url: str, payload: dict, headers: dict, timeout: int) -> dict:
+    """POST a JSON body over HTTPS only and return the decoded JSON reply.
+
+    http.client is used on purpose: unlike urllib it has no file:// handler,
+    and refusing plain http keeps tokens off the wire in clear text.
+    """
+    parts = urlsplit(url)
+    if parts.scheme != "https" or not parts.hostname:
+        raise ValueError("Only https:// URLs are allowed")
+    path = parts.path or "/"
+    if parts.query:
+        path += "?" + parts.query
+    conn = http.client.HTTPSConnection(
+        parts.hostname, parts.port or 443, timeout=timeout, context=tls_context()
+    )
+    try:
+        conn.request("POST", path, body=json.dumps(payload),
+                     headers={"Content-Type": "application/json", **headers})
+        response = conn.getresponse()
+        body = response.read()
+        if response.status >= 400:
+            raise RuntimeError(f"HTTP {response.status}")
+        return json.loads(body or b"{}")
+    finally:
+        conn.close()
 
 
 def run(cmd: list[str]) -> str:
@@ -146,14 +174,11 @@ def ask_model(url: str, key: str, model: str, file: str, text: str) -> str:
         f"BEGIN-{marker}\n{text}\nEND-{marker}\n"
         "Reply with the JSON object only."
     )
-    body = json.dumps({"model": model, "temperature": 0,
-                       "messages": [{"role": "user", "content": prompt}]}).encode()
-    req = urllib.request.Request(
-        url.rstrip("/") + "/v1/chat/completions", data=body,
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {key}"})
-    with urllib.request.urlopen(req, timeout=300, context=tls_context()) as resp:
-        data = json.load(resp)
+    data = https_post_json(
+        url.rstrip("/") + "/v1/chat/completions",
+        {"model": model, "temperature": 0,
+         "messages": [{"role": "user", "content": prompt}]},
+        {"Authorization": f"Bearer {key}"}, 300)
     return data["choices"][0]["message"]["content"]
 
 
@@ -213,12 +238,8 @@ def render(rule: list[dict], ai: list[dict], notes: list[str]) -> str:
 
 
 def post_comment(api: str, repo: str, number: str, token: str, body: str):
-    req = urllib.request.Request(
-        f"{api}/repos/{repo}/issues/{number}/comments",
-        data=json.dumps({"body": body}).encode(),
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"token {token}"})
-    urllib.request.urlopen(req, timeout=30, context=tls_context()).read()
+    https_post_json(f"{api}/repos/{repo}/issues/{number}/comments",
+                    {"body": body}, {"Authorization": f"token {token}"}, 30)
 
 
 def main() -> int:
