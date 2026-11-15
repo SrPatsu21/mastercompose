@@ -125,7 +125,25 @@ jobs:
             echo "Checking $file"
 
             while IFS= read -r variable; do
-              export "$variable=ci-placeholder"
+              case "$variable" in
+                *_PORT)
+                  value=8080
+                  ;;
+                *_IP|*_ID)
+                  value=127.0.0.1
+                  ;;
+                *_PATH)
+                  value=/tmp/nginx-ci/
+                  ;;
+                *_DOMAIN)
+                  value=localhost
+                  ;;
+                *)
+                  value=ci-placeholder
+                  ;;
+              esac
+
+              export "$variable=$value"
             done < <(
               grep -oE '\$\{[A-Za-z_][A-Za-z0-9_]*\}' "$file" \
                 | tr -d '${}' \
