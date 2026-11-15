@@ -119,9 +119,10 @@ The Runner container runs as UID/GID `1000:1000`, so it needs ownership of the m
 sudo chown -R 1000:1000 apps/forgejo/runner/data
 sudo chmod -R u+rwX apps/forgejo/runner/data
 
-sudo chown -R 1000:1000 \
-  apps/forgejo/data/actions_log \
-  apps/forgejo/data/actions_artifacts
+sudo chown -R 1000:1000 apps/forgejo/data/actions_log apps/forgejo/data/actions_artifacts
+
+sudo chown -R 1000:1000 apps/forgejo/data/packages
+sudo chmod -R u+rwX apps/forgejo/data/packages
 ```
 
 Use `config.example.yml` as an example to create the `config.yml` file for the Runner.
@@ -141,6 +142,15 @@ mkdir -p .forgejo/workflows
 ```
 
 Add your workflow files (`.yml`) inside `.forgejo/workflows/`.
+
+##### Conteiner for Actions
+
+- build
+
+```shell
+docker build --platform linux/amd64 -t 10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04 .forgejo/docker/basic_ci
+docker push 10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04
+```
 
 ### Jellyfin
 

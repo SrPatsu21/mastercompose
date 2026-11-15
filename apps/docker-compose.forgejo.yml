@@ -162,6 +162,7 @@ services:
 
     volumes:
       - ./forgejo/runner/docker:/var/lib/docker
+      - ../../.forgejo/docker:/build:ro
 
     networks:
       - runner_backend
