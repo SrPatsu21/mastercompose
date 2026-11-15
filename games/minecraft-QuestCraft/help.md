@@ -1,7 +1,17 @@
-https://help.akliz.net/docs/setup-a-whitelist-for-your-minecraft-server#:~:text=In%20your%20console%2C%20type%3A%20whitelist,add%20to%20the%20white%20list.
+# Help
 
-docker exec -i mc rcon-cli
+- White list
 
-https://docker-minecraft-server.readthedocs.io/en/latest/
+<https://help.akliz.net/docs/setup-a-whitelist-for-your-minecraft-server#:~:text=In%20your%20console%2C%20type%3A%20whitelist,add%20to%20the%20white%20list.>
 
-sudo chown -R 1000:1000 games/minecraft-QuestCraft/
+- Console
+
+`docker exec -i mc rcon-cli`
+
+- docs
+
+<https://docker-minecraft-server.readthedocs.io/en/latest/>
+
+- fix permission
+
+`sudo chown -R 1000:1000 games/minecraft-QuestCraft/`

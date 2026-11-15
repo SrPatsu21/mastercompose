@@ -159,6 +159,8 @@ services:
       - -H
       - tcp://0.0.0.0:2375
       - --tls=false
+      - --insecure-registry
+      - 10.147.18.1
 
     volumes:
       - ./forgejo/runner/docker:/var/lib/docker
