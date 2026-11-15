@@ -50,6 +50,7 @@ apps/ai/searxng
 apps/forgejo/runner/.cache
 apps/forgejo/runner/data/*
 !apps/forgejo/runner/data/config.example.yml
+apps/forgejo/runner/docker
 # apps/forgejo/runner
 
 # =============================================

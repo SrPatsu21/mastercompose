@@ -200,7 +200,7 @@ services:
       DOCKER_HOST: tcp://forgejo_runner_dind:2375
 
     volumes:
-      - ./forgejo/runner/data:/data
+      - ./forgejo/runner/data:/data:rw
 
     working_dir: /data
 

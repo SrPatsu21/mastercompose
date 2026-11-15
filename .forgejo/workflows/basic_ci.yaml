@@ -34,7 +34,8 @@ jobs:
             tidy \
             nginx \
             gettext-base \
-            openssl
+            openssl \
+            npm
 
           sudo npm install -g markdownlint-cli2
 

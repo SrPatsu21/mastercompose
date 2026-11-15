@@ -118,6 +118,10 @@ The Runner container runs as UID/GID `1000:1000`, so it needs ownership of the m
 ```shell
 sudo chown -R 1000:1000 apps/forgejo/runner/data
 sudo chmod -R u+rwX apps/forgejo/runner/data
+
+sudo chown -R 1000:1000 \
+  apps/forgejo/data/actions_log \
+  apps/forgejo/data/actions_artifacts
 ```
 
 Use `config.example.yml` as an example to create the `config.yml` file for the Runner.
