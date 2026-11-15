@@ -16,6 +16,7 @@ runner:
   report_interval: 1s
   labels:
     - "basic-ci-img:docker://10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04"
+    - "ai-review-img:docker://10.147.18.1/srpatsu21/ai-review-img:ubuntu-24.04"
 
 cache:
   enabled: true

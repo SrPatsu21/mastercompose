@@ -1,0 +1,111 @@
+name: AI review
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    name: Scanners and advisory AI review
+    runs-on: ai-review-img
+
+    steps:
+      # -----------------------------------------
+      # Checkout (manual, with TLS verification enabled)
+      #
+      # FORGEJO_CA_B64 comes from the runner env file (like FORGEJO_TOKEN)
+      # and holds the nginx certificate in base64. Only that certificate is
+      # trusted, so no certificate authority is needed.
+      #
+      # pull_request: the PR is fetched as data only and never executed.
+      # push: the pusher has write access, so the pushed commit is used.
+      # -----------------------------------------
+
+      - name: Prepare checkout
+        run: |
+          set -eu
+          : "${FORGEJO_CA_B64:?FORGEJO_CA_B64 is missing in the runner env file}"
+          printf '%s' "$FORGEJO_CA_B64" | base64 -d > /tmp/ca.crt
+          export GIT_SSL_CAINFO=/tmp/ca.crt
+
+          SERVER="https://10.147.18.1/forgejo"
+          AUTH_HEADER="$(printf '%s:%s' "$GITHUB_ACTOR" "$FORGEJO_TOKEN" | base64 | tr -d '\n')"
+
+          git_fetch() {
+            git -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" \
+              fetch --no-tags "$@"
+          }
+
+          git init -q .
+          git remote add origin "${SERVER}/${GITHUB_REPOSITORY}.git"
+
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            read -r PR BASE_REF < <(python3 - <<'PY'
+          import json, os
+          event = json.load(open(os.environ["GITHUB_EVENT_PATH"]))
+          print(event["pull_request"]["number"], event["pull_request"]["base"]["ref"])
+          PY
+            )
+            git_fetch origin \
+              "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}" \
+              "+refs/pull/${PR}/head:refs/remotes/pr/head"
+            git checkout -q --detach "refs/remotes/origin/${BASE_REF}"
+            git worktree add -q /tmp/pr refs/remotes/pr/head
+            {
+              echo "RANGE=refs/remotes/origin/${BASE_REF}...refs/remotes/pr/head"
+              echo "PR_NUMBER=${PR}"
+              echo "SCAN_DIR=/tmp/pr"
+            } > /tmp/review.env
+          else
+            BEFORE="$(python3 -c 'import json,os; print(json.load(open(os.environ["GITHUB_EVENT_PATH"])).get("before",""))')"
+            git_fetch origin "$GITHUB_SHA"
+            git checkout -q --detach FETCH_HEAD
+            EMPTY_TREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+            if [ -z "$BEFORE" ] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+              BEFORE="$EMPTY_TREE"
+            fi
+            {
+              echo "RANGE=${BEFORE}..${GITHUB_SHA}"
+              echo "PR_NUMBER="
+              echo "SCAN_DIR=."
+            } > /tmp/review.env
+          fi
+
+      # -----------------------------------------
+      # Scanners: these decide pass/fail
+      # -----------------------------------------
+
+      - name: Static scanners
+        run: |
+          set -eu
+          . /tmp/review.env
+
+          semgrep scan --metrics=off --config p/security-audit --error --quiet "$SCAN_DIR"
+
+          detect-secrets scan --all-files "$SCAN_DIR" > /tmp/secrets.json
+          python3 - <<'PY'
+          import json, sys
+          results = json.load(open("/tmp/secrets.json"))["results"]
+          for path, items in results.items():
+              for item in items:
+                  print(f"SECRET? {path}:{item['line_number']} ({item['type']})")
+          sys.exit(1 if results else 0)
+          PY
+
+      # -----------------------------------------
+      # Deterministic rules (fail the job) and advisory AI review
+      # -----------------------------------------
+
+      - name: AI review
+        env:
+          AI_GATEWAY_URL: https://10.147.18.1/ai-api
+          AI_GATEWAY_KEY: ${{ secrets.AI_GATEWAY_KEY }}
+          FORGEJO_API: https://10.147.18.1/forgejo/api/v1
+          REPO: ${{ github.repository }}
+          REVIEW_CA_FILE: /tmp/ca.crt
+        run: |
+          set -eu
+          . /tmp/review.env
+          export PR_NUMBER
+          python3 /opt/ai-review/ai_review.py --range "$RANGE"
