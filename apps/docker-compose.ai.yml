@@ -11,6 +11,25 @@ services:
 
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      OLLAMA_FLASH_ATTENTION: "1"
+      OLLAMA_KV_CACHE_TYPE: q8_0
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_CONTEXT_LENGTH: "40960"
+      OLLAMA_KEEP_ALIVE: "15m"
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    mem_limit: 8g
+    memswap_limit: 8g
 
     volumes:
       - ./ai/ollama:/root/.ollama
@@ -32,17 +51,18 @@ services:
     env_file:
       - ../.env
 
-    command:
-      - "--config"
-      - "/app/config.yaml"
-      - "--port"
-      - "${AI_GATEWAY_PORT}"
+    entrypoint:
+      - "/bin/sh"
+      - "/app/entrypoint.sh"
 
     secrets:
       - ai_gateway_key
 
     volumes:
       - ./ai/gateway/config.yaml:/app/config.yaml:ro
+      - ./ai/gateway/entrypoint.sh:/app/entrypoint.sh:ro
+      - ./ai/gateway/loader:/app/loader:ro
+      - ./ai/gateway/models:/app/models:ro
 
     depends_on:
       - ollama
@@ -69,7 +89,11 @@ services:
       ENABLE_OLLAMA_API: "false"
       ENABLE_OPENAI_API: "true"
       OPENAI_API_BASE_URL: http://${AI_IP}:${AI_GATEWAY_PORT}/v1
-      OPENAI_API_KEY: /run/secrets/forgejo_db_password
+      OPENAI_API_KEY: /run/secrets/ai_gateway_key
+      ENABLE_WEB_SEARCH: "true"
+      WEB_SEARCH_ENGINE: "searxng"
+      SEARXNG_QUERY_URL: "http://${SEARXNG_IP}:8080/search"
+      WEB_SEARCH_RESULT_COUNT: "5"
 
       RAG_EMBEDDING_MODEL: ""
       RAG_EMBEDDING_ENGINE: "ollama"
@@ -87,6 +111,53 @@ services:
       internal:
         ipv4_address: ${AI_WEBUI_IP}
 
+  # =============================================
+  # SearXNG - Web Search
+  # =============================================
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: mastercompose-searxng
+    restart: unless-stopped
+
+    environment:
+      SEARXNG_VALKEY_URL: valkey://172.20.0.24:6379/0
+
+    volumes:
+      - ./ai/searxng/config:/etc/searxng:rw
+      - ./ai/searxng/cache:/var/cache/searxng:rw
+
+    depends_on:
+      - searxng-valkey
+
+    networks:
+      internal:
+        ipv4_address: ${SEARXNG_IP}
+
+
+  # =============================================
+  # SearXNG - Valkey
+  # =============================================
+
+  searxng-valkey:
+    image: valkey/valkey:9-alpine
+    container_name: mastercompose-searxng-valkey
+    restart: unless-stopped
+
+    command:
+      - valkey-server
+      - --save
+      - "300"
+      - "1"
+      - --loglevel
+      - warning
+
+    volumes:
+      - ./ai/searxng/valkey:/data
+
+    networks:
+      internal:
+        ipv4_address: ${SEARXNG_VALKEY_IP}
 
 # =============================================
 # Networks

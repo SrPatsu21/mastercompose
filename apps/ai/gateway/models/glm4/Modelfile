@@ -1,0 +1,8 @@
+# Custom Ollama model for the MasterCompose gateway.
+# The loader creates it as "mastercompose-glm4" so the base model stays untouched.
+FROM glm4
+
+# TEMPLATE is intentionally omitted: the base model's template is inherited.
+# To override it, add a TEMPLATE """...""" block here and restart the gateway.
+
+# SYSTEM is intentionally omitted: system_prompt.md is injected by the LiteLLM hook.

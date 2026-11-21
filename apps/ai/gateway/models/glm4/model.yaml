@@ -1,0 +1,63 @@
+# =============================================
+# MasterCompose - Model Configuration
+# Model: GLM4
+# Provider: Ollama
+# =============================================
+
+model:
+  name: glm4                  # base model in Ollama (FROM in the Modelfile)
+  ollama_name: mastercompose-glm4  # custom model created from the Modelfile
+  public_name: glm4           # name exposed by the gateway
+  provider: ollama_chat
+  api_base: http://mastercompose-ollama:11434
+
+generation:
+  seed: null
+  stop: []
+  temperature: 0.7
+  max_tokens: 4096
+  top_p: 0.8
+  top_k: 40
+  min_p: 0.0
+  frequency_penalty: 0.0
+  presence_penalty: 0.0
+  logit_bias: {}
+
+reasoning:
+  enabled: false
+  effort: none
+
+function_calling:
+  enabled: true               # capability declaration only, see notes
+  parallel_tool_calls: false
+
+# Request-level options (think, format, keep_alive) go to LiteLLM;
+# the remaining keys are baked into the Ollama model at creation time.
+ollama:
+  think: false
+  format: ""
+  keep_alive: "10m"
+
+  num_keep: 0
+  num_ctx: 8192
+  num_batch: 512
+  num_thread: 0               # 0 = Ollama default (ignored)
+  num_gpu: -1                 # -1 = Ollama default (ignored)
+  use_mmap: true
+  use_mlock: false
+
+  mirostat: 0
+  mirostat_eta: 0.1
+  mirostat_tau: 5.0
+  repeat_last_n: 64
+  repeat_penalty: 1.1
+  tfs_z: 1.0
+
+files:
+  system_prompt: system_prompt.md
+  template: Modelfile
+
+metadata:
+  category: general
+  description: General-purpose conversational model
+  enabled: true

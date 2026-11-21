@@ -1,0 +1,28 @@
+# Model used by the Forgejo review pipeline (no tool calling needed).
+# It points to the same Ollama model as the chat alias, so switching between
+# chat and review never unloads or reloads the weights.
+
+model:
+  name: glm-4.7-flash:q4_K_M
+  public_name: code-review
+  provider: ollama_chat
+  api_base: http://mastercompose-ollama:11434
+
+generation:
+  temperature: 0.1
+  max_tokens: 1500
+
+function_calling:
+  enabled: false
+
+ollama:
+  think: false
+  keep_alive: "10m"
+
+files:
+  system_prompt: system_prompt.md
+
+metadata:
+  category: code-review
+  description: Advisory code review for the Forgejo pipeline
+  enabled: true

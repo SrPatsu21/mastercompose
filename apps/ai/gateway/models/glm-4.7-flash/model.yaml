@@ -1,0 +1,35 @@
+# =============================================
+# MasterCompose - Model Configuration
+# Model: GLM-4.7-Flash (chat, tools, web search)
+# Provider: Ollama
+# =============================================
+
+model:
+  # Used as is, without a Modelfile: a derived model could lose the base
+  # model's renderer/parser (thinking and tool-call handling).
+  name: glm-4.7-flash:q4_K_M
+  public_name: glm-4.7-flash
+  provider: ollama_chat
+  api_base: http://mastercompose-ollama:11434
+
+generation:
+  temperature: 0.7        # adjust to the model card's recommended values
+  max_tokens: 4096
+
+function_calling:
+  enabled: true
+  parallel_tool_calls: false
+
+# Request-level options. Context size is set in the Ollama container
+# (OLLAMA_CONTEXT_LENGTH), since no Modelfile is used for this model.
+ollama:
+  think: false
+  keep_alive: "10m"
+
+files:
+  system_prompt: system_prompt.md
+
+metadata:
+  category: general
+  description: General-purpose chat model with tool calling
+  enabled: true
