@@ -70,3 +70,11 @@ A task is complete only when:
 When the task is complete, provide a concise report of what was changed, what was tested, the test results and any remaining issues.
 
 If a task cannot be completed, explain the blocker and identify the work that remains.
+
+## Git Ignore Protection
+
+- Never modify, edit, delete, rename, move, or overwrite files or directories listed in `.gitignore`.
+- Treat all files and directories matched by `.gitignore` patterns as protected.
+- You may read or inspect these files when necessary, but must never change their contents.
+- Do not modify `.gitignore` to bypass this restriction.
+- If a task requires modifying an ignored file, stop and ask for explicit user authorization before proceeding.
