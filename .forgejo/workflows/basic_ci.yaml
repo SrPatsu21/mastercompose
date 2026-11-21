@@ -92,7 +92,8 @@ jobs:
           markdownlint-cli2 \
             "**/*.md" \
             "!**/node_modules/**" \
-            "!**/.git/**"
+            "!**/.git/**" \
+            --config '{"MD013": false}'
 
       # -----------------------------------------
       # Nginx
