@@ -359,3 +359,9 @@ docker run --rm \
 ```
 
 The expected response is JSON containing search results.
+
+##### Cline
+
+Configure the LiteLLM provider using the following Base URL: `https://<zerotier ip>:8444/v1`
+
+The api key is on: `secrets/ai_gateway_key.txt`
