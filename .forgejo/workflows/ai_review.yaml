@@ -127,7 +127,7 @@ jobs:
 
       - name: AI review
         env:
-          AI_GATEWAY_URL: https://10.147.18.1/ai-api
+          AI_GATEWAY_URL: https://10.147.18.1:8444
           AI_GATEWAY_KEY: ${{ secrets.AI_GATEWAY_KEY }}
           FORGEJO_API: https://10.147.18.1/forgejo/api/v1
           REPO: ${{ github.repository }}
