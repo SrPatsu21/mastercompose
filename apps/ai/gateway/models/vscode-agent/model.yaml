@@ -33,7 +33,7 @@ function_calling:
 ollama:
   think: true
   format: ""
-  keep_alive: "-1"
+  keep_alive: "10m"
 
 files:
   system_prompt: system_prompt.md
