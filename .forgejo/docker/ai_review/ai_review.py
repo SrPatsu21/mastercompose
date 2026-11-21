@@ -96,9 +96,20 @@ def https_post_json(url: str, payload: dict, headers: dict, timeout: int) -> dic
                      headers={"Content-Type": "application/json", **headers})
         response = conn.getresponse()
         body = response.read()
+
         if response.status >= 400:
-            raise RuntimeError(f"HTTP {response.status}")
-        return json.loads(body or b"{}")
+            error_body = body.decode("utf-8", errors="replace")[:1000]
+            raise RuntimeError(
+                f"Gateway HTTP {response.status} {response.reason}: {error_body}"
+            )
+
+        try:
+            return json.loads(body or b"{}")
+        except json.JSONDecodeError as exc:
+            error_body = body.decode("utf-8", errors="replace")[:500]
+            raise RuntimeError(
+                f"Gateway returned invalid JSON: {error_body}"
+            ) from exc
     finally:
         conn.close()
 
