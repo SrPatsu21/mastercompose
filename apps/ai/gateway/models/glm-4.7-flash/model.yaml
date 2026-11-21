@@ -13,8 +13,20 @@ model:
   api_base: http://mastercompose-ollama:11434
 
 generation:
-  temperature: 0.7        # adjust to the model card's recommended values
+  temperature: 0.7
   max_tokens: 4096
+  top_p: 1.0
+  top_k: 40
+  min_p: 0.01
+  frequency_penalty: 0.0
+  presence_penalty: 0.0
+  seed: null
+  stop: []
+  logit_bias: {}
+
+reasoning:
+  enabled: false
+  effort: none
 
 function_calling:
   enabled: true
@@ -24,6 +36,7 @@ function_calling:
 # (OLLAMA_CONTEXT_LENGTH), since no Modelfile is used for this model.
 ollama:
   think: false
+  format: ""
   keep_alive: "10m"
 
 files:
