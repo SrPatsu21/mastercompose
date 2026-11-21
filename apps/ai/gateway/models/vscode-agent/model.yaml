@@ -1,0 +1,44 @@
+# =============================================
+# MasterCompose - Model Configuration
+# Model: GLM-4.7-Flash (Autonomous Coding Agent)
+# Provider: Ollama
+# =============================================
+
+model:
+  name: glm-4.7-flash:q4_K_M
+  public_name: vscode-agent
+  provider: ollama_chat
+  api_base: http://mastercompose-ollama:11434
+
+generation:
+  temperature: 0.7
+  max_tokens: 40960
+  top_p: 0.95
+  top_k: 40
+  min_p: 0.01
+  frequency_penalty: 0.0
+  presence_penalty: 0.0
+  seed: null
+  stop: []
+  logit_bias: {}
+
+reasoning:
+  enabled: false
+  effort: none
+
+function_calling:
+  enabled: true
+  parallel_tool_calls: false
+
+ollama:
+  think: true
+  format: ""
+  keep_alive: "-1"
+
+files:
+  system_prompt: system_prompt.md
+
+metadata:
+  category: coding-agent
+  description: Autonomous coding agent for multi-step development tasks
+  enabled: true
