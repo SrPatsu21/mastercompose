@@ -281,7 +281,9 @@ def main() -> int:
                                     os.environ["AI_GATEWAY_KEY"],
                                     args.model, file, text)
                 except Exception as exc:  # network or gateway failure
-                    notes.append(f"Falha ao consultar a IA: {type(exc).__name__}")
+                    notes.append(
+                        f"Falha ao consultar a IA: {type(exc).__name__}: {str(exc)[:500]}"
+                    )
                     break
                 found = parse_findings(raw, file)
                 if found is not None:

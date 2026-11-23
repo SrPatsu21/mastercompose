@@ -172,7 +172,7 @@ docker push 10.147.18.1/srpatsu21/basic-ci-img:ubuntu-24.04
 ```shell
 docker build --platform linux/amd64 -t 10.147.18.1/srpatsu21/ai-review-img:ubuntu-24.04 .forgejo/docker/ai_review
 docker push 10.147.18.1/srpatsu21/ai-review-img:ubuntu-24.04
-``` 
+```
 
 ### Jellyfin
 
