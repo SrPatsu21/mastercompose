@@ -8,7 +8,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir semgrep detect-secrets
+RUN pip install --no-cache-dir semgrep
 
 # The review script is baked into the image, so a pull request can never
 # change what reviews it. Rebuild and push the image when the script changes.

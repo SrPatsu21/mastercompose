@@ -25,6 +25,50 @@ jobs:
           git checkout --detach FETCH_HEAD
 
       # -----------------------------------------
+      # Secrets
+      # -----------------------------------------
+
+      - name: Detect secrets
+        run: |
+          set -eu
+
+          mkdir -p /tmp/basic-ci
+
+          detect-secrets scan \
+            --all-files \
+            --exclude-files '(^|/)\.git/.*' \
+            --exclude-files '(^|/)node_modules/.*' \
+            > /tmp/basic-ci/secrets.json
+
+          python3 - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          report = Path("/tmp/basic-ci/secrets.json")
+          results = json.loads(report.read_text()).get("results", {})
+
+          findings = []
+
+          for path, items in results.items():
+              for item in items:
+                  findings.append(
+                      (path, item.get("line_number", "?"), item.get("type", "Unknown"))
+                  )
+
+          print("=== Secret detection ===")
+
+          if findings:
+              for path, line, secret_type in findings:
+                  print(f"WARNING: {path}:{line} ({secret_type})")
+
+              print(f"\nFound {len(findings)} potential secret(s).")
+              sys.exit(1)
+
+          print("No secrets detected.")
+          PY
+
+      # -----------------------------------------
       # YAML
       # -----------------------------------------
 

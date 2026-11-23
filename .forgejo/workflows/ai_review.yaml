@@ -1,8 +1,8 @@
 name: AI review
 
 on:
-  push:
   pull_request:
+    branches: [master, main]
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -71,55 +71,6 @@ jobs:
               echo "SCAN_DIR=."
             } > /tmp/review.env
           fi
-
-      # -----------------------------------------
-      # Scanners: these decide pass/fail
-      # -----------------------------------------
-
-      - name: Static scanners
-        run: |
-          set -eu
-          . /tmp/review.env
-
-          mkdir -p /tmp/review
-
-          semgrep scan \
-            --metrics=off \
-            --config p/security-audit \
-            --quiet \
-            "$SCAN_DIR" \
-            > /tmp/review/semgrep.txt 2>&1 || true
-
-          detect-secrets scan \
-            --all-files \
-            --exclude-files '(^|/)\.git/.*' \
-            --exclude-files '(^|/)node_modules/.*' \
-            "$SCAN_DIR" \
-            > /tmp/review/secrets.json 2>/tmp/review/secrets.err || true
-
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          semgrep = Path("/tmp/review/semgrep.txt")
-          secrets = Path("/tmp/review/secrets.json")
-
-          print("=== Semgrep ===")
-          if semgrep.exists():
-              print(semgrep.read_text() or "No output.")
-
-          print("\n=== detect-secrets ===")
-          if secrets.exists():
-              try:
-                  results = json.loads(secrets.read_text())["results"]
-                  if not results:
-                      print("No findings.")
-                  for path, items in results.items():
-                      for item in items:
-                          print(f"WARNING: {path}:{item['line_number']} ({item['type']})")
-              except Exception as error:
-                  print(f"Scanner output could not be parsed: {error}")
-          PY
 
       # -----------------------------------------
       # Deterministic rules (fail the job) and advisory AI review
