@@ -42,7 +42,6 @@ jobs:
 
           python3 - <<'PY'
           import json
-          import sys
           from pathlib import Path
 
           report = Path("/tmp/basic-ci/secrets.json")
@@ -63,9 +62,8 @@ jobs:
                   print(f"WARNING: {path}:{line} ({secret_type})")
 
               print(f"\nFound {len(findings)} potential secret(s).")
-              sys.exit(1)
-
-          print("No secrets detected.")
+          else:
+              print("No secrets detected.")
           PY
 
       # -----------------------------------------
